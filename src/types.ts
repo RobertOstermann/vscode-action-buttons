@@ -3,7 +3,9 @@ export interface CommandOpts {
 	saveAll?: boolean
 	command: string
 	singleInstance?: boolean
+	id: number
 	name: string
+	createButton: boolean
 	tooltip: string
 	color: string
 	focus?: boolean
@@ -16,4 +18,11 @@ export interface ButtonOpts {
 	tooltip: string
 	name: string
 	color: string
+}
+
+export interface DropdownOpts {
+	name: string
+	commands: (number|string)[],
+	color: string,
+	tooltip: string
 }

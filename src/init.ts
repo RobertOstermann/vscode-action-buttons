@@ -1,6 +1,6 @@
 import { buildConfigFromPackageJson } from './packageJson'
 import * as vscode from 'vscode'
-import { ButtonOpts, CommandOpts } from './types'
+import { ButtonOpts, CommandOpts, DropdownOpts } from './types'
 import * as path from 'path'
 
 const registerCommand = vscode.commands.registerCommand
@@ -13,6 +13,7 @@ const init = async (context: vscode.ExtensionContext) => {
 	const defaultColor = config.get<string>('defaultColor')
 	const reloadButton = config.get<string>('reloadButton')
 	const loadNpmCommands = config.get<boolean>('loadNpmCommands')
+	const dropdowns = config.get<DropdownOpts[]>('dropdowns')
 	const cmds = config.get<CommandOpts[]>('commands')
 	const commands: CommandOpts[] = []
 
@@ -23,8 +24,7 @@ const init = async (context: vscode.ExtensionContext) => {
 			tooltip: 'Refreshes the action buttons',
 			color: defaultColor
 		})
-	}
-	else {
+	}	else {
 		const onCfgChange:vscode.Disposable = vscode.workspace.onDidChangeConfiguration(e => {
 			if (e.affectsConfiguration('actionButtons')) {
 				vscode.commands.executeCommand('extension.refreshButtons');
@@ -43,24 +43,25 @@ const init = async (context: vscode.ExtensionContext) => {
 	if (commands.length) {
 		const terminals: { [name: string]: vscode.Terminal } = {}
 		commands.forEach(
-			({ cwd, saveAll, command, name, tooltip, color, singleInstance, focus, useVsCodeApi, args }: CommandOpts) => {
+			({ cwd, saveAll, command, id, name, createButton, tooltip, color, singleInstance, focus, useVsCodeApi, args }: CommandOpts) => {
 				const vsCommand = `extension.${name.replace(' ', '')}`
 
 				const disposable = registerCommand(vsCommand, async () => {
-					const vars = {
+					const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
 
+					const vars = {
 						// - the path of the folder opened in VS Code
-						workspaceFolder: vscode.workspace.rootPath,
+						workspaceFolder: rootPath,
 
 						// - the name of the folder opened in VS Code without any slashes (/)
-						workspaceFolderBasename: (vscode.workspace.rootPath)? path.basename(vscode.workspace.rootPath) : null,
+						workspaceFolderBasename: (rootPath)? path.basename(rootPath) : null,
 
 						// - the current opened file
 						file: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.fileName : null,
 
 						// - the current opened file relative to workspaceFolder
-						relativeFile: (vscode.window.activeTextEditor && vscode.workspace.rootPath) ? path.relative(
-							vscode.workspace.rootPath,
+						relativeFile: (vscode.window.activeTextEditor && rootPath) ? path.relative(
+							rootPath,
 							vscode.window.activeTextEditor.document.fileName
 						) : null,
 
@@ -77,9 +78,9 @@ const init = async (context: vscode.ExtensionContext) => {
 						fileExtname: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).ext : null,
 
 						// - the task runner's current working directory on startup
-						cwd: cwd || vscode.workspace.rootPath || require('os').homedir(),
+						cwd: cwd || rootPath || require('os').homedir(),
 
-						//- the current selected line number in the active file
+						// - the current selected line number in the active file
 						lineNumber: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.selection.active.line + 1 : null,
 
 						// - the current selected text in the active file
@@ -124,12 +125,14 @@ const init = async (context: vscode.ExtensionContext) => {
 
 				disposables.push(disposable)
 
-				loadButton({
-					command: vsCommand,
-					name,
-					tooltip: tooltip || command,
-					color: color || defaultColor,
-				})
+				if (createButton) {
+					loadButton({
+						command: vsCommand,
+						name,
+						tooltip: tooltip || command,
+						color: color || defaultColor,
+					})
+				}		
 			}
 		)
 	} else {
@@ -137,6 +140,47 @@ const init = async (context: vscode.ExtensionContext) => {
 			'VsCode Action Buttons: You have no run commands.',
 			4000
 		)
+	}
+
+	if (commands.length && dropdowns.length) {
+		dropdowns.forEach((dropdown: DropdownOpts) => {
+			const vsCommand = `extension.${dropdown.name.replace(' ', '')}`
+			const dropdownCommands = commands.filter((command) => dropdown.commands.includes(command.id) || dropdown.commands.includes(command.name));
+			const quickPickItems: vscode.QuickPickItem[] = [];
+			dropdownCommands.forEach((command: CommandOpts) => {
+				const quickPickItem: vscode.QuickPickItem = {
+					label: command.name,
+				}
+				quickPickItems.push(quickPickItem);
+			});
+
+			const disposable = registerCommand(vsCommand, async () => {
+				const quickPick = vscode.window.createQuickPick();
+				quickPick.items = quickPickItems;
+				quickPick.ignoreFocusOut = true;
+				quickPick.onDidChangeSelection(selection => {
+					if (selection[0]) {
+						quickPick.hide();
+						const quickPickSelection = selection[0].label;
+						const quickPickCommand = `extension.${quickPickSelection.replace(' ', '')}`;
+						vscode.commands.executeCommand(quickPickCommand);
+					}
+				});
+				quickPick.onDidHide(() => quickPick.dispose());
+				quickPick.show();
+			});
+
+			context.subscriptions.push(disposable);
+
+			disposables.push(disposable);
+
+			loadButton({
+				command: vsCommand,
+				name: dropdown.name,
+				tooltip: dropdown.tooltip || null,
+				color: dropdown.color || defaultColor,
+			})
+		})
 	}
 }
 
@@ -146,7 +190,9 @@ function loadButton({
 	tooltip,
 	color,
 }: ButtonOpts) {
-	const runButton = vscode.window.createStatusBarItem(1, 0)
+	const alignment = vscode.StatusBarAlignment.Left;
+	const priority = 0;
+	const runButton = vscode.window.createStatusBarItem(alignment, priority)
 	runButton.text = name
 	runButton.color = color
 	runButton.tooltip = tooltip

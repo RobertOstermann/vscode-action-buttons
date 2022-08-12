@@ -56,9 +56,19 @@
 									"command"
 								],
 								"properties": {
+									"id": {
+										"type": "number",
+										"default": null,
+										"markdownDescription": "ID of the action button"
+									},
 									"name": {
 										"type": "string",
 										"markdownDescription": "Name of the action button"
+									},
+									"createButton": {
+										"type": "boolean",
+										"default": true,
+										"markdownDescription": "Determines if the action button is created\n\nChange this to `false` for dropdown items"
 									},
 									"saveAll": {
 										"type": "boolean",
@@ -106,6 +116,40 @@
 									}
 								}
 							}
+						},
+						"dropdowns": {
+							"type": "array",
+							"items": {
+								"type": "object",
+								"additionalProperties": false,
+								"required": [
+									"name"
+								],
+								"properties": {
+									"name": {
+										"type": "string",
+										"markdownDescription": "Name of the dropdown button"
+									},
+									"commands": {
+										"type": "array",
+										"items": {
+											"type": ["number", "string"]
+										},
+										"default": [],
+										"markdownDescription": "A list with the id or name for the commands to display in the dropdown"
+									},
+									"color": {
+										"type": "string",
+										"markdownDescription": "Specifies the action button text color"
+									},
+									"tooltip": {
+										"type": "string",
+										"markdownDescription": "Tooltip text to display when hovering over the button"
+									}
+								}
+							},
+							"default": [],
+							"markdownDescription": "Specifies commands that can be accessed with a quick-select"
 						},
 						"defaultColor": {
 							"type": "string",

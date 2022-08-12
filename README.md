@@ -29,16 +29,19 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 		 "reloadButton":"♻️", // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
 		 "commands": [
 			 {
-				 "cwd": "/home/custom_folder", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-				 "name": "$(triangle-right) Run Cargo",
-				 "color": "green",
-				 "singleInstance": true,
-				 "command": "cargo run ${file}", // This is executed in the terminal.
+				"id": 1, // This can be used to display in the dropdowns
+				"createButton": true, // Set this to false if the button is used in a dropdown and should not show on the status bar
+				"cwd": "/home/custom_folder", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
+				"name": "$(triangle-right) Run Cargo",
+				"color": "green",
+				"singleInstance": true,
+				"command": "cargo run ${file}", // This is executed in the terminal.
 			 },
 			 {
-				 "name": "$(tools) Build Cargo",
-				 "color": "green",
-				 "command": "cargo build ${file}",
+				"createButton": false,
+				"name": "$(tools) Build Cargo",
+				"color": "green",
+				"command": "cargo build ${file}",
 			 },
 			 {
 				"name": "$(split-horizontal) Split editor",
@@ -46,7 +49,15 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 				"useVsCodeApi": true,
 				"command": "workbench.action.splitEditor"
 		     }
-		 ]
+		 ],
+		 "dropdowns": [
+			{
+				"name": "Dropdown",
+				"commands": [1, "$(tools) Build Cargo"], // The id or name can be used to define commands in the quick-pick dropdown.
+				"color": "white",
+				"tooltip": "test"
+			}
+		],
 	 }
  ```
 
@@ -84,6 +95,17 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
     * Specifies whether to execute a VS Code command or terminal command. Defaults to `false`.
 * **args**
     * Specifies additional arguments to pass to VS Code command. Only valid when `useVsCodeApi` is `true`.
+
+### Command Options
+
+* **name**
+    * Name of the action button. This field is required. You can add icons in command name by typing `$(icon-name)`. Look [here](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) for icons. (Note: If you will misspell no icons will show)
+* **commands**
+    * Commands to show in the quick-select dropdown.
+* **color**
+    * Specifies the action button text color. Defaults to `defaultColor`.
+* **tooltip**
+    * Tooltip text to display when hovering over the button. Defaults to null (no tooltip).
 
 ## Usage
 
