@@ -142,6 +142,11 @@
 										"type": "string",
 										"markdownDescription": "Specifies the action button text color"
 									},
+									"ignoreFocusOut": {
+										"type": "boolean",
+										"default": false,
+										"markdownDescription": "Determines if the dropdown should stay open even when loosing dropdown focus."
+									},
 									"tooltip": {
 										"type": "string",
 										"markdownDescription": "Tooltip text to display when hovering over the button"

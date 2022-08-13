@@ -24,5 +24,6 @@ export interface DropdownOpts {
 	name: string
 	commands: (number|string)[],
 	color: string,
+	ignoreFocusOut: boolean,
 	tooltip: string
 }

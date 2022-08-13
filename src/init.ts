@@ -157,7 +157,7 @@ const init = async (context: vscode.ExtensionContext) => {
 			const disposable = registerCommand(vsCommand, async () => {
 				const quickPick = vscode.window.createQuickPick();
 				quickPick.items = quickPickItems;
-				quickPick.ignoreFocusOut = true;
+				quickPick.ignoreFocusOut = dropdown.ignoreFocusOut || false;
 				quickPick.onDidChangeSelection(selection => {
 					if (selection[0]) {
 						quickPick.hide();
