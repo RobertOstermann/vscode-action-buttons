@@ -29,7 +29,7 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 		 "reloadButton":"♻️", // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
 		 "commands": [
 			 {
-				"id": 1, // This can be used to display in the dropdowns
+				"id": "runCargo", // This can be used to display in the dropdowns. This should not have any spaces.
 				"createButton": true, // Set this to false if the button is used in a dropdown and should not show on the status bar
 				"cwd": "/home/custom_folder", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
 				"name": "$(triangle-right) Run Cargo",
@@ -38,22 +38,24 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 				"command": "cargo run ${file}", // This is executed in the terminal.
 			 },
 			 {
-				"createButton": false,
+				"id": "buildCargo",
 				"name": "$(tools) Build Cargo",
-				"color": "green",
 				"command": "cargo build ${file}",
+				"createButton": false,
 			 },
 			 {
+				"id": "split.editor",
 				"name": "$(split-horizontal) Split editor",
+				"command": "workbench.action.splitEditor",
 				"color": "orange",
 				"useVsCodeApi": true,
-				"command": "workbench.action.splitEditor"
 		     }
 		 ],
 		 "dropdowns": [
 			{
+				"id": "dropdown",
 				"name": "Dropdown",
-				"commands": [1, "$(tools) Build Cargo"], // The id or name can be used to define commands in the quick-pick dropdown.
+				"commands": ["runCargo", "$(tools) Build Cargo", "split.editor"], // The id or name can be used to define commands in the quick-pick dropdown.
 				"color": "white",
 				"tooltip": "test"
 			}
@@ -74,6 +76,8 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 
 ### Command Options
 
+* **id**
+    * The id of the action button. This field is required. The ID is prepended with the extension name (actionButtons) to create the vscode command id and can be used to create keyboard shortcuts. This field should not contain spaces or special characters.
 * **name**
     * Name of the action button. This field is required. You can add icons in command name by typing `$(icon-name)`. Look [here](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) for icons. (Note: If you will misspell no icons will show)
 * **saveAll**
@@ -98,6 +102,8 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 
 ### Command Options
 
+* **id**
+    * The id of the action button. This field is required. The ID is prepended with the extension name (actionButtons) to create the vscode command id and can be used to create keyboard shortcuts. This field should not contain spaces or special characters.
 * **name**
     * Name of the action button. This field is required. You can add icons in command name by typing `$(icon-name)`. Look [here](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) for icons. (Note: If you will misspell no icons will show)
 * **commands**
@@ -107,22 +113,15 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 * **tooltip**
     * Tooltip text to display when hovering over the button. Defaults to null (no tooltip).
 
-## Usage
+## Keyboard Shortcuts
 
- ```json
- 	"actionButtons": {
-		 "reloadButton": null,
-		 "loadNpmCommands": false,
-		 "commands": [
-			 {
-				 "name": "Run Cargo",
-				 "singleInstance": true,
-				 "color": "#af565c",
-				 "command": "cargo run ${file}",
-			 },
-		 ]
-	 }
- ```
+Keyboard Shortcuts can be set up for each of the commands/dropdowns that have been created.
+
+* Go to File -> Preferences -> Keyboard Shortcuts to manually set keyboard shortcuts.
+* Search for **actionButtons**
+	* If the commands are not available/correct, try refreshing action buttons or reloading the window  
+* There should now be a list of commands with the specified ids (from settings.json)
+* Set the desired keyboard shortcut
 
 ## Config Vars
 

@@ -52,18 +52,18 @@
 								"type": "object",
 								"additionalProperties": false,
 								"required": [
+									"id",
 									"name",
 									"command"
 								],
 								"properties": {
 									"id": {
-										"type": "number",
-										"default": null,
-										"markdownDescription": "ID of the action button"
+										"type": "string",
+										"markdownDescription": "The unique ID of the action button. The ID is prepended with the extension name (actionButtons) and can be used to create keyboard shortcuts"
 									},
 									"name": {
 										"type": "string",
-										"markdownDescription": "Name of the action button"
+										"markdownDescription": "The name of the action button"
 									},
 									"createButton": {
 										"type": "boolean",
@@ -123,9 +123,14 @@
 								"type": "object",
 								"additionalProperties": false,
 								"required": [
+									"id",
 									"name"
 								],
 								"properties": {
+									"id": {
+										"type": "string",
+										"markdownDescription": "The unique ID of the action button\n\nThe ID is prepended with the extension name (actionButtons) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters"
+									},
 									"name": {
 										"type": "string",
 										"markdownDescription": "Name of the dropdown button"
@@ -133,7 +138,7 @@
 									"commands": {
 										"type": "array",
 										"items": {
-											"type": ["number", "string"]
+											"type": "string"
 										},
 										"default": [],
 										"markdownDescription": "A list with the id or name for the commands to display in the dropdown"

@@ -9,6 +9,7 @@ const disposables = []
 
 const init = async (context: vscode.ExtensionContext) => {
 	disposables.forEach(d => d.dispose())
+	const extensionName = 'actionButtons'
 	const config = vscode.workspace.getConfiguration('actionButtons')
 	const defaultColor = config.get<string>('defaultColor')
 	const reloadButton = config.get<string>('reloadButton')
@@ -16,6 +17,7 @@ const init = async (context: vscode.ExtensionContext) => {
 	const dropdowns = config.get<DropdownOpts[]>('dropdowns')
 	const cmds = config.get<CommandOpts[]>('commands')
 	const commands: CommandOpts[] = []
+	const commandIds: Set<string> = new Set()
 
 	if (reloadButton !== null) {
 		loadButton({
@@ -44,7 +46,13 @@ const init = async (context: vscode.ExtensionContext) => {
 		const terminals: { [name: string]: vscode.Terminal } = {}
 		commands.forEach(
 			({ cwd, saveAll, command, id, name, createButton, tooltip, color, singleInstance, focus, useVsCodeApi, args }: CommandOpts) => {
-				const vsCommand = `extension.${name.replace(' ', '')}`
+				const vsCommand = extensionName + '.' + id.replace(' ', '');
+				
+				if (commandIds.has(vsCommand)) {
+					vscode.window.showErrorMessage(`The id '${id}' is used for multiple commands. Please remove duplicate id's.`);
+					return;
+				}
+				commandIds.add(vsCommand);
 
 				const disposable = registerCommand(vsCommand, async () => {
 					const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
@@ -144,12 +152,20 @@ const init = async (context: vscode.ExtensionContext) => {
 
 	if (commands.length && dropdowns.length) {
 		dropdowns.forEach((dropdown: DropdownOpts) => {
-			const vsCommand = `extension.${dropdown.name.replace(' ', '')}`
+			const vsCommand = extensionName + '.' + dropdown.id.replace(' ', '');
+
+			if (commandIds.has(vsCommand)) {
+				vscode.window.showErrorMessage(`The id '${dropdown.id}' is used for multiple commands or dropdowns. Please remove duplicate id's.`);
+				return;
+			}
+			commandIds.add(vsCommand);
+
 			const dropdownCommands = commands.filter((command) => dropdown.commands.includes(command.id) || dropdown.commands.includes(command.name));
 			const quickPickItems: vscode.QuickPickItem[] = [];
 			dropdownCommands.forEach((command: CommandOpts) => {
 				const quickPickItem: vscode.QuickPickItem = {
 					label: command.name,
+					description: extensionName + '.' + command.id.replace(' ', '')
 				}
 				quickPickItems.push(quickPickItem);
 			});
@@ -161,8 +177,7 @@ const init = async (context: vscode.ExtensionContext) => {
 				quickPick.onDidChangeSelection(selection => {
 					if (selection[0]) {
 						quickPick.hide();
-						const quickPickSelection = selection[0].label;
-						const quickPickCommand = `extension.${quickPickSelection.replace(' ', '')}`;
+						const quickPickCommand = selection[0].description;
 						vscode.commands.executeCommand(quickPickCommand);
 					}
 				});

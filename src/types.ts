@@ -3,7 +3,7 @@ export interface CommandOpts {
 	saveAll?: boolean
 	command: string
 	singleInstance?: boolean
-	id: number
+	id: string
 	name: string
 	createButton: boolean
 	tooltip: string
@@ -21,9 +21,10 @@ export interface ButtonOpts {
 }
 
 export interface DropdownOpts {
+	id: string
 	name: string
-	commands: (number|string)[],
-	color: string,
-	ignoreFocusOut: boolean,
+	commands: (number|string)[]
+	color: string
+	ignoreFocusOut: boolean
 	tooltip: string
 }
