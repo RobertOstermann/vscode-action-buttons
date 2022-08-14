@@ -1,204 +1,203 @@
 {
-	"name": "action-buttons",
-	"displayName": "VsCode Action Buttons",
-	"description": "Add customizable buttons to the status bar to execute actions or tasks",
-	"version": "1.2.1",
-	"publisher": "seunlanlege",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/SeunLanLege/vscode-action-buttons.git"
-	},
-	"engines": {
-		"vscode": "^1.27.2"
-	},
-	"categories": [
-		"Other"
-	],
-	"keywords": [
-		"action",
-		"buttons",
-		"task",
-		"runner",
-		"status bar"
-	],
-	"activationEvents": [
-		"*"
-	],
-	"main": "./out/src/extension",
-	"contributes": {
-		"commands": [
-			{
-				"command": "extension.refreshButtons",
-				"title": "Refresh Action Buttons"
-			}
-		],
-		"configuration": {
-			"type": "object",
-			"title": "VsCode Action Buttons",
-			"properties": {
-				"actionButtons": {
-					"type": "object",
-					"additionalProperties": false,
-					"default": {
-						"commands": [],
-						"defaultColor": "white",
-						"reloadButton": "↻",
-						"loadNpmCommands": false
-					},
-					"properties": {
-						"commands": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"additionalProperties": false,
-								"required": [
-									"id",
-									"name",
-									"command"
-								],
-								"properties": {
-									"id": {
-										"type": "string",
-										"markdownDescription": "The unique ID of the action button. The ID is prepended with the extension name (actionButtons) and can be used to create keyboard shortcuts"
-									},
-									"name": {
-										"type": "string",
-										"markdownDescription": "The name of the action button"
-									},
-									"createButton": {
-										"type": "boolean",
-										"default": true,
-										"markdownDescription": "Determines if the action button is created\n\nChange this to `false` for dropdown items"
-									},
-									"saveAll": {
-										"type": "boolean",
-										"markdownDescription": "Save all open files before execute command"
-
-									},
-									"command": {
-										"type": "string",
-										"markdownDescription": "Command to execute when action is activated.\n\nIf `useVsCodeApi` is `true`, this is the VS Code command to execute. Otherwise, this specifies the command to execute in the terminal"
-									},
-									"tooltip": {
-										"type": "string",
-										"markdownDescription": "Tooltip text to display when hovering over the button"
-									},
-									"color": {
-										"type": "string",
-										"markdownDescription": "Specifies the action button text color"
-									},
-									"cwd": {
-										"type": "string",
-										"markdownDescription": "Start directory when executing terminal command\n\nOnly valid when `useVsCodeApi` is `false`"
-									},
-									"singleInstance": {
-										"type": "boolean",
-										"default": false,
-										"markdownDescription": "Reopen associated terminal each time this action is activated\n\nOnly valid when `useVsCodeApi` is `false`"
-									},
-									"focus": {
-										"type": "boolean",
-										"default": false,
-										"markdownDescription": "Focus the terminal after executing the command.\n\nOnly valid when `useVsCodeApi` is `false`"
-									},
-									"useVsCodeApi": {
-										"type": "boolean",
-										"default": false,
-										"markdownDescription": "Specifies whether to execute a VS Code command or terminal command"
-									},
-									"args": {
-										"type": "array",
-										"items": {
-											"type": "string"
-										},
-										"default": [],
-										"markdownDescription": "List of arguments passed to VS Code command\n\nOnly valid when `useVsCodeApi` is `true`"
-									}
-								}
-							}
-						},
-						"dropdowns": {
-							"type": "array",
-							"items": {
-								"type": "object",
-								"additionalProperties": false,
-								"required": [
-									"id",
-									"name"
-								],
-								"properties": {
-									"id": {
-										"type": "string",
-										"markdownDescription": "The unique ID of the action button\n\nThe ID is prepended with the extension name (actionButtons) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters"
-									},
-									"name": {
-										"type": "string",
-										"markdownDescription": "Name of the dropdown button"
-									},
-									"commands": {
-										"type": "array",
-										"items": {
-											"type": "string"
-										},
-										"default": [],
-										"markdownDescription": "A list with the id or name for the commands to display in the dropdown"
-									},
-									"color": {
-										"type": "string",
-										"markdownDescription": "Specifies the action button text color"
-									},
-									"ignoreFocusOut": {
-										"type": "boolean",
-										"default": false,
-										"markdownDescription": "Determines if the dropdown should stay open even when loosing dropdown focus."
-									},
-									"tooltip": {
-										"type": "string",
-										"markdownDescription": "Tooltip text to display when hovering over the button"
-									}
-								}
-							},
-							"default": [],
-							"markdownDescription": "Specifies commands that can be accessed with a quick-select"
-						},
-						"defaultColor": {
-							"type": "string",
-							"required": false,
-							"default": "white",
-							"markdownDescription": "Default color to use for action button text"
-						},
-						"reloadButton": {
-							"type": [
-								"string",
-								"null"
-							],
-							"required": false,
-							"default": "↻",
-							"markdownDescription": "Reload button text. If `null`, button is disabled"
-						},
-						"loadNpmCommands": {
-							"type": "boolean",
-							"required": false,
-							"default": false,
-							"markdownDescription": "Specifies whether to automatically generate buttons from npm commands listed in `package.json`"
-						}
-					}
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "tsc -p ./",
-		"compile": "tsc -watch -p ./",
-		"publish": "vsce publish",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"@types/mocha": "^2.2.32",
-		"@types/node": "^16.10.2",
-		"mocha": "^6.1.4",
-		"typescript": "^4.4.3",
-		"vscode": "^1.0.0"
-	}
+  "name": "action-buttons",
+  "displayName": "VsCode Action Buttons",
+  "description": "Add customizable buttons to the status bar to execute actions or tasks",
+  "version": "1.2.1",
+  "publisher": "seunlanlege",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SeunLanLege/vscode-action-buttons.git"
+  },
+  "engines": {
+    "vscode": "^1.27.2"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "action",
+    "buttons",
+    "task",
+    "runner",
+    "status bar"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./out/src/extension",
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.refreshButtons",
+        "title": "Refresh Action Buttons"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "VsCode Action Buttons",
+      "properties": {
+        "actionButtons": {
+          "type": "object",
+          "additionalProperties": false,
+          "default": {
+            "commands": [],
+            "defaultColor": "white",
+            "reloadButton": "↻",
+            "loadNpmCommands": false
+          },
+          "properties": {
+            "commands": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "name",
+                  "command"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "markdownDescription": "The unique ID of the action button. The ID is prepended with the extension name (actionButtons) and can be used to create keyboard shortcuts"
+                  },
+                  "name": {
+                    "type": "string",
+                    "markdownDescription": "The name of the action button"
+                  },
+                  "createButton": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Determines if the action button is created\n\nChange this to `false` for dropdown items"
+                  },
+                  "saveAll": {
+                    "type": "boolean",
+                    "markdownDescription": "Save all open files before execute command"
+                  },
+                  "command": {
+                    "type": "string",
+                    "markdownDescription": "Command to execute when action is activated.\n\nIf `useVsCodeApi` is `true`, this is the VS Code command to execute. Otherwise, this specifies the command to execute in the terminal"
+                  },
+                  "tooltip": {
+                    "type": "string",
+                    "markdownDescription": "Tooltip text to display when hovering over the button"
+                  },
+                  "color": {
+                    "type": "string",
+                    "markdownDescription": "Specifies the action button text color"
+                  },
+                  "cwd": {
+                    "type": "string",
+                    "markdownDescription": "Start directory when executing terminal command\n\nOnly valid when `useVsCodeApi` is `false`"
+                  },
+                  "singleInstance": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Reopen associated terminal each time this action is activated\n\nOnly valid when `useVsCodeApi` is `false`"
+                  },
+                  "focus": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Focus the terminal after executing the command.\n\nOnly valid when `useVsCodeApi` is `false`"
+                  },
+                  "useVsCodeApi": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Specifies whether to execute a VS Code command or terminal command"
+                  },
+                  "args": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": [],
+                    "markdownDescription": "List of arguments passed to VS Code command\n\nOnly valid when `useVsCodeApi` is `true`"
+                  }
+                }
+              }
+            },
+            "dropdowns": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "id",
+                  "name"
+                ],
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "markdownDescription": "The unique ID of the action button\n\nThe ID is prepended with the extension name (actionButtons) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters"
+                  },
+                  "name": {
+                    "type": "string",
+                    "markdownDescription": "Name of the dropdown button"
+                  },
+                  "commands": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "default": [],
+                    "markdownDescription": "A list with the id or name for the commands to display in the dropdown"
+                  },
+                  "color": {
+                    "type": "string",
+                    "markdownDescription": "Specifies the action button text color"
+                  },
+                  "ignoreFocusOut": {
+                    "type": "boolean",
+                    "default": false,
+                    "markdownDescription": "Determines if the dropdown should stay open even when loosing dropdown focus."
+                  },
+                  "tooltip": {
+                    "type": "string",
+                    "markdownDescription": "Tooltip text to display when hovering over the button"
+                  }
+                }
+              },
+              "default": [],
+              "markdownDescription": "Specifies commands that can be accessed with a quick-select"
+            },
+            "defaultColor": {
+              "type": "string",
+              "required": false,
+              "default": "white",
+              "markdownDescription": "Default color to use for action button text"
+            },
+            "reloadButton": {
+              "type": [
+                "string",
+                "null"
+              ],
+              "required": false,
+              "default": "↻",
+              "markdownDescription": "Reload button text. If `null`, button is disabled"
+            },
+            "loadNpmCommands": {
+              "type": "boolean",
+              "required": false,
+              "default": false,
+              "markdownDescription": "Specifies whether to automatically generate buttons from npm commands listed in `package.json`"
+            }
+          }
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -watch -p ./",
+    "publish": "vsce publish",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^2.2.32",
+    "@types/node": "^16.10.2",
+    "mocha": "^6.1.4",
+    "typescript": "^4.4.3",
+    "vscode": "^1.0.0"
+  }
 }
