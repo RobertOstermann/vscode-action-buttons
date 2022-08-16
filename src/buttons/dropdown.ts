@@ -39,8 +39,10 @@ export default class Dropdown {
 
       const disposable = vscode.commands.registerCommand(vsCommand, async () => {
         const quickPick = vscode.window.createQuickPick();
+        quickPick.title = dropdown.options?.title;
         quickPick.items = quickPickItems;
         quickPick.ignoreFocusOut = dropdown.ignoreFocusOut || false;
+        quickPick.placeholder = dropdown.options?.placeholder;
         quickPick.onDidChangeSelection((selection) => {
           if (selection[0]) {
             quickPick.hide();
@@ -55,16 +57,18 @@ export default class Dropdown {
       context.subscriptions.push(disposable);
       disposables.push(disposable);
 
-      const statusBarOptions: StatusBarButton = {
-        alignment: dropdown.alignment,
-        color: dropdown.color,
-        command: vsCommand,
-        label: dropdown.label,
-        tooltip: dropdown.tooltip,
-        priority: dropdown.priority
-      };
+      if (dropdown.showButton) {
+        const statusBarOptions: StatusBarButton = {
+          alignment: dropdown.alignment,
+          color: dropdown.color,
+          command: vsCommand,
+          label: dropdown.label,
+          tooltip: dropdown.tooltip,
+          priority: dropdown.priority
+        };
 
-      Button.createStatusBarButton(statusBarOptions, disposables);
+        Button.createStatusBarButton(statusBarOptions, disposables);
+      }
     });
   }
 }

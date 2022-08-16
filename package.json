@@ -100,30 +100,10 @@
                 ],
                 "markdownDescription": "The alignment of the action button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
               },
-              "backgroundColor": {
-                "type": "string",
-                "enum": [
-                  "Default",
-                  "Warning",
-                  "Error"
-                ],
-                "default": "Default",
-                "markdownEnumDescriptions": [
-                  "The default background color.",
-                  "The background status bar theme color for warnings.",
-                  "The background status bar theme color for errors."
-                ],
-                "markdownDescription": "The background color for this action button."
-              },
               "color": {
                 "type": "string",
                 "default": "statusBar.foreground",
                 "markdownDescription": "Specifies the action button text color."
-              },
-              "createButton": {
-                "type": "boolean",
-                "default": true,
-                "markdownDescription": "Determines if the action button is shown on the status bar."
               },
               "priority": {
                 "type": "number",
@@ -135,11 +115,26 @@
                 "default": false,
                 "markdownDescription": "Save all open files before execute command."
               },
+              "showButton": {
+                "type": "boolean",
+                "default": true,
+                "markdownDescription": "Determines if the action button is shown on the status bar."
+              },
               "terminal": {
                 "type": "object",
                 "additionalProperties": false,
                 "markdownDescription": "The terminal settings for this command. Only valid when `useVsCodeApi = false`.",
                 "properties": {
+                  "name": {
+                    "type": "string",
+                    "default": null,
+                    "markdownDescription": "The name of the terminal for this command. If a terminal with this name is already open then the terminal will be re-used."
+                  },
+                  "clear": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "Determines if the terminal is cleared before the specified command is run."
+                  },
                   "cwd": {
                     "type": [
                       "string",
@@ -240,6 +235,11 @@
                 "default": 0,
                 "markdownDescription": "The priority of this item. A higher value means the item should be shown more to the left."
               },
+              "showButton": {
+                "type": "boolean",
+                "default": true,
+                "markdownDescription": "Determines if the action button is shown on the status bar."
+              },
               "tooltip": {
                 "type": [
                   "string",
@@ -265,14 +265,6 @@
                     ],
                     "default": null,
                     "markdownDescription": "Optional placeholder in the filter text."
-                  },
-                  "prompt": {
-                    "type": [
-                      "string",
-                      null
-                    ],
-                    "default": null,
-                    "markdownDescription": "An optional prompt text providing some ask or explanation to the user."
                   },
                   "title": {
                     "type": [

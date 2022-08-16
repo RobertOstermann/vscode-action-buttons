@@ -7,6 +7,8 @@ export enum BackgroundColor {
 }
 
 export type TerminalOptions = {
+  name?: string;
+  clear?: boolean;
   cwd?: string;
   focus?: boolean;
   singleInstance?: boolean;
@@ -17,11 +19,10 @@ type CommandButton = {
   label?: string;
   command?: string;
   alignment?: StatusBarAlignment;
-  backgroundColor?: string;
   color?: string;
-  createButton?: boolean;
   priority?: number;
   saveAll?: boolean;
+  showButton?: boolean;
   tooltip?: string;
   terminal?: TerminalOptions;
   useVsCodeApi?: boolean;

@@ -72,14 +72,22 @@ export default class Configuration {
     commands.forEach((command) => {
       // Set defaults for the undefined properties. ID, label, and command must be defined.
       if (command.alignment === undefined) command.alignment = vscode.StatusBarAlignment.Left;
-      if (command.backgroundColor === undefined) command.backgroundColor = BackgroundColor.Default;
       if (command.color === undefined) command.color = Configuration.defaultColor();
-      if (command.createButton === undefined) command.createButton = true;
       if (command.priority === undefined) command.priority = 0;
       if (command.saveAll === undefined) command.saveAll = false;
-      if (command.terminal.cwd === undefined) command.terminal.cwd === null;
-      if (command.terminal.focus === undefined) command.terminal.focus = false;
-      if (command.terminal.singleInstance === undefined) command.terminal.singleInstance = true;
+      if (command.showButton === undefined) command.showButton = true;
+      if (command.terminal === undefined) command.terminal = {
+        name: null,
+        clear: true,
+        cwd: null,
+        focus: false,
+        singleInstance: true
+      };
+      if (command.terminal?.name === undefined) command.terminal.name = null;
+      if (command.terminal?.clear === undefined) command.terminal.clear = true;
+      if (command.terminal?.cwd === undefined) command.terminal.cwd = null;
+      if (command.terminal?.focus === undefined) command.terminal.focus = false;
+      if (command.terminal?.singleInstance === undefined) command.terminal.singleInstance = true;
       if (command.tooltip === undefined) command.tooltip = null;
       if (command.useVsCodeApi === undefined) command.useVsCodeApi = false;
       if (command.args === undefined) command.args = [];
@@ -105,12 +113,11 @@ export default class Configuration {
       if (dropdown.options === undefined) dropdown.options = {
         ignoreFocusOut: false,
         placeholder: null,
-        prompt: null,
         title: null
       };
       if (dropdown.options?.ignoreFocusOut === undefined) dropdown.options.ignoreFocusOut = false;
       if (dropdown.options?.placeholder === undefined) dropdown.options.placeholder = null;
-      if (dropdown.options?.prompt === undefined) dropdown.options.prompt = null;
+      if (dropdown.showButton === undefined) dropdown.showButton = true;
       if (dropdown.options?.title === undefined) dropdown.options.title = null;
     });
 
