@@ -1,9 +1,13 @@
+import { homedir } from "os";
+import * as path from "path";
 import * as vscode from "vscode";
-import Command, { BackgroundColor } from "../types/command";
-import Dropdown from "../types/dropdown";
+
+import CommandButton, { BackgroundColor } from "../types/command";
+import DropdownButton from "../types/dropdown";
+import Variables from "../types/variables";
 
 export default class Configuration {
-  static extensionName = 'actionButtons';
+  static extensionName = "actionButtons";
 
   /**
    * Initialize the configuration options that require a reload upon change.
@@ -13,7 +17,7 @@ export default class Configuration {
 
     const configurationChange = vscode.workspace.onDidChangeConfiguration((event) => {
       if (event.affectsConfiguration("actionButtons")) {
-        vscode.commands.executeCommand('actionButtons.refreshButtons');
+        vscode.commands.executeCommand("actionButtons.refreshButtons");
       }
     });
     context.subscriptions.push(configurationChange);
@@ -60,10 +64,10 @@ export default class Configuration {
   /**
    * @returns A list of action buttons for specified commands.
    */
-  static commands(): Array<Command> {
+  static commands(): Array<CommandButton> {
     const commands = vscode.workspace
       .getConfiguration(this.extensionName)
-      .get<Command[]>("commands");
+      .get<CommandButton[]>("commands");
 
     commands.forEach((command) => {
       // Set defaults for the undefined properties. ID, label, and command must be defined.
@@ -87,21 +91,79 @@ export default class Configuration {
   /**
    * @returns An action button that opens a quick-select of specified commands.
    */
-  static dropdowns(): Array<Dropdown> {
+  static dropdowns(): Array<DropdownButton> {
     // Set defaults for the undefined properties. ID and label.
     const dropdowns = vscode.workspace
       .getConfiguration(this.extensionName)
-      .get<Dropdown[]>("dropdowns");
+      .get<DropdownButton[]>("dropdowns");
 
     dropdowns.forEach((dropdown) => {
+      if (dropdown.alignment === undefined) dropdown.alignment = vscode.StatusBarAlignment.Left;
       if (dropdown.color === undefined) dropdown.color = Configuration.defaultColor();
+      if (dropdown.priority === undefined) dropdown.priority = 0;
       if (dropdown.tooltip === undefined) dropdown.tooltip = null;
-      if (dropdown.options.ignoreFocusOut === undefined) dropdown.options.ignoreFocusOut = false;
-      if (dropdown.options.placeholder === undefined) dropdown.options.placeholder = null;
-      if (dropdown.options.prompt === undefined) dropdown.options.prompt = null;
-      if (dropdown.options.title === undefined) dropdown.options.title = null;
+      if (dropdown.options === undefined) dropdown.options = {
+        ignoreFocusOut: false,
+        placeholder: null,
+        prompt: null,
+        title: null
+      };
+      if (dropdown.options?.ignoreFocusOut === undefined) dropdown.options.ignoreFocusOut = false;
+      if (dropdown.options?.placeholder === undefined) dropdown.options.placeholder = null;
+      if (dropdown.options?.prompt === undefined) dropdown.options.prompt = null;
+      if (dropdown.options?.title === undefined) dropdown.options.title = null;
     });
 
     return dropdowns;
+  }
+
+  /**
+   * @returns The variables for a terminal
+   */
+  static variables(command: CommandButton): Variables {
+    const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+
+    const vars: Variables = {
+      // - the path of the folder opened in VS Code
+      workspaceFolder: rootPath,
+
+      // - the name of the folder opened in VS Code without any slashes (/)
+      workspaceFolderBasename: (rootPath) ? path.basename(rootPath) : null,
+
+      // - the current opened file
+      file: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.fileName : null,
+
+      // - the current opened file relative to workspaceFolder
+      relativeFile: (vscode.window.activeTextEditor && rootPath) ? path.relative(
+        rootPath,
+        vscode.window.activeTextEditor.document.fileName
+      ) : null,
+
+      // - the current opened file's basename
+      fileBasename: (vscode.window.activeTextEditor) ? path.basename(vscode.window.activeTextEditor.document.fileName) : null,
+
+      // - the current opened file's basename with no file extension
+      fileBasenameNoExtension: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).name : null,
+
+      // - the current opened file's dirname
+      fileDirname: (vscode.window.activeTextEditor) ? path.dirname(vscode.window.activeTextEditor.document.fileName) : null,
+
+      // - the current opened file's extension
+      fileExtname: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).ext : null,
+
+      // - the task runner's current working directory on startup
+      cwd: command.terminal.cwd || rootPath || homedir(),
+
+      // - the current selected line number in the active file
+      lineNumber: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.selection.active.line + 1 : null,
+
+      // - the current selected text in the active file
+      selectedText: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.getText(vscode.window.activeTextEditor.selection) : null,
+
+      // - the path to the running VS Code executable
+      execPath: process.execPath
+    };
+
+    return vars;
   }
 }

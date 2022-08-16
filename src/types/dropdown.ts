@@ -1,3 +1,5 @@
+import { StatusBarAlignment } from "vscode";
+
 type DropdownOptions = {
   ignoreFocusOut?: boolean;
   placeholder?: string;
@@ -5,14 +7,16 @@ type DropdownOptions = {
   title?: string;
 };
 
-type Dropdown = {
+type DropdownButton = {
   id?: string;
   label?: string;
   commands?: string[];
+  alignment?: StatusBarAlignment;
   color?: string;
   ignoreFocusOut?: boolean;
+  priority?: number;
   tooltip?: string;
   options?: DropdownOptions;
 };
 
-export default Dropdown;
+export default DropdownButton;

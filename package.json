@@ -217,10 +217,28 @@
                 "default": [],
                 "markdownDescription": "A list with the id or label for the commands to display in the dropdown."
               },
+              "alignment": {
+                "type": "number",
+                "enum": [
+                  1,
+                  2
+                ],
+                "default": 1,
+                "markdownEnumDescriptions": [
+                  "Aligned to the left side.",
+                  "Aligned to the right side."
+                ],
+                "markdownDescription": "The alignment of the action button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
+              },
               "color": {
                 "type": "string",
                 "default": "statusBar.foreground",
                 "markdownDescription": "Specifies the quick-select button text color."
+              },
+              "priority": {
+                "type": "number",
+                "default": 0,
+                "markdownDescription": "The priority of this item. A higher value means the item should be shown more to the left."
               },
               "tooltip": {
                 "type": [
@@ -282,6 +300,11 @@
   "devDependencies": {
     "@types/mocha": "^2.2.32",
     "@types/node": "^16.10.2",
+    "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.13.0",
+    "eslint": "^8.10.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-tsdoc": "^0.2.14",
     "mocha": "^6.1.4",
     "typescript": "^4.4.3",
     "vscode": "^1.0.0"

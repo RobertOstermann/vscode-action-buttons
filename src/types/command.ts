@@ -12,7 +12,7 @@ export type TerminalOptions = {
   singleInstance?: boolean;
 };
 
-type Command = {
+type CommandButton = {
   id?: string;
   label?: string;
   command?: string;
@@ -28,4 +28,4 @@ type Command = {
   args?: string[];
 };
 
-export default Command;
+export default CommandButton;

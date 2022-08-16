@@ -1,9 +1,10 @@
-'use strict';
-import * as vscode from 'vscode';
-import Configuration from "./helpers/configuration";
-import init from './init';
+"use strict";
+import * as vscode from "vscode";
 
-let disposables: Array<vscode.Disposable> = [];
+import Configuration from "./helpers/configuration";
+import init from "./init";
+
+let disposables: vscode.Disposable[] = [];
 
 const initialize = async (context: vscode.ExtensionContext): Promise<void> => {
   // Clean up the previous action buttons.
@@ -20,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
   initialize(context);
 
   const disposable = vscode.commands.registerCommand(
-    'actionButtons.refreshButtons',
+    "actionButtons.refreshButtons",
     () => initialize(context)
   );
 
@@ -28,4 +29,6 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate() {
+  return;
+}

@@ -1,5 +1,5 @@
 import { StatusBarAlignment, workspace } from 'vscode';
-import Command, { BackgroundColor, TerminalOptions } from "./types/command";
+import CommandButton, { BackgroundColor, TerminalOptions } from "./types/command";
 
 export const getPackageJson = async (): Promise<undefined | any> =>
   new Promise(resolve => {
@@ -41,5 +41,5 @@ export const buildConfigFromPackageJson = async (defaultColor: string) => {
     terminal: terminalOptions,
     useVsCodeApi: false,
     args: [],
-  })) as Command[];
+  })) as CommandButton[];
 };
