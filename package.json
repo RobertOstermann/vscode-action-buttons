@@ -1,12 +1,12 @@
 {
-  "name": "action-buttons",
-  "displayName": "VsCode Action Buttons",
+  "name": "better-status-bar",
+  "displayName": "Better Status Bar",
   "description": "Add customizable buttons to the status bar to execute actions or tasks",
-  "version": "1.2.1",
-  "publisher": "seunlanlege",
+  "version": "1.0.0",
+  "publisher": "RobertOstermann",
   "repository": {
     "type": "git",
-    "url": "https://github.com/SeunLanLege/vscode-action-buttons.git"
+    "url": "https://github.com/RobertOstermann/vscode-action-buttons"
   },
   "engines": {
     "vscode": "^1.27.2"
@@ -15,11 +15,11 @@
     "Other"
   ],
   "keywords": [
+    "status bar",
     "action",
     "buttons",
     "task",
-    "runner",
-    "status bar"
+    "runner"
   ],
   "activationEvents": [
     "*"
@@ -28,26 +28,26 @@
   "contributes": {
     "commands": [
       {
-        "command": "actionButtons.refreshButtons",
+        "command": "betterStatusBar.refreshButtons",
         "title": "Refresh Action Buttons"
       }
     ],
     "configuration": {
       "title": "VsCode Action Buttons",
       "properties": {
-        "actionButtons.defaultColor": {
+        "betterStatusBar.defaultColor": {
           "type": "string",
           "required": false,
           "default": "statusBar.foreground",
           "markdownDescription": "The color to use for action button text. The default is the theme color."
         },
-        "actionButtons.loadNpmCommands": {
+        "betterStatusBar.loadNpmCommands": {
           "type": "boolean",
           "required": false,
           "default": false,
           "markdownDescription": "Automatically generate buttons from npm commands listed in `package.json`."
         },
-        "actionButtons.reloadButton": {
+        "betterStatusBar.reloadButton": {
           "type": [
             "string",
             "null"
@@ -56,7 +56,7 @@
           "default": null,
           "markdownDescription": "The text for the reload button. The default is to reload on configuration change and not show a reload button."
         },
-        "actionButtons.commands": {
+        "betterStatusBar.commands": {
           "type": "array",
           "default": [],
           "markdownDescription": "A list of action buttons for specified commands.",
@@ -77,7 +77,7 @@
             "properties": {
               "id": {
                 "type": "string",
-                "markdownDescription": "The unique ID of the action button. The ID is prepended with the extension name (actionButtons) and can be used to create keyboard shortcuts."
+                "markdownDescription": "The unique ID of the action button. The ID is prepended with the extension name (betterStatusBar) and can be used to create keyboard shortcuts."
               },
               "label": {
                 "type": "string",
@@ -179,7 +179,7 @@
             }
           }
         },
-        "actionButtons.dropdowns": {
+        "betterStatusBar.dropdowns": {
           "type": "array",
           "markdownDescription": "An action button that opens a quick-select of specified commands.",
           "items": {
@@ -198,7 +198,7 @@
             "properties": {
               "id": {
                 "type": "string",
-                "markdownDescription": "The unique ID of the quick-select button\n\nThe ID is prepended with the extension name (actionButtons) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters."
+                "markdownDescription": "The unique ID of the quick-select button\n\nThe ID is prepended with the extension name (betterStatusBar) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters."
               },
               "label": {
                 "type": "string",

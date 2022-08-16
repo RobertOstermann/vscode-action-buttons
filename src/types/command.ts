@@ -1,10 +1,4 @@
-import { MarkdownString, StatusBarAlignment } from "vscode";
-
-export enum BackgroundColor {
-  Default = "Default",
-  Warning = "Warning",
-  Error = "Error",
-}
+import { StatusBarAlignment } from "vscode";
 
 export type TerminalOptions = {
   name?: string;

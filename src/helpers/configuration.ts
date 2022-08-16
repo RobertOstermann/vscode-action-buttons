@@ -2,12 +2,12 @@ import { homedir } from "os";
 import * as path from "path";
 import * as vscode from "vscode";
 
-import CommandButton, { BackgroundColor } from "../types/command";
+import CommandButton from "../types/command";
 import DropdownButton from "../types/dropdown";
 import Variables from "../types/variables";
 
 export default class Configuration {
-  static extensionName = "actionButtons";
+  static extensionName = "betterStatusBar";
 
   /**
    * Initialize the configuration options that require a reload upon change.
@@ -16,8 +16,8 @@ export default class Configuration {
     if (this.showReloadButton()) return null;
 
     const configurationChange = vscode.workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration("actionButtons")) {
-        vscode.commands.executeCommand("actionButtons.refreshButtons");
+      if (event.affectsConfiguration(this.extensionName)) {
+        vscode.commands.executeCommand(`${this.extensionName}.refreshButtons`);
       }
     });
     context.subscriptions.push(configurationChange);

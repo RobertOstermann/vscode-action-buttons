@@ -1,12 +1,13 @@
-import { StatusBarAlignment, workspace } from 'vscode';
-import CommandButton, { BackgroundColor, TerminalOptions } from "./types/command";
+import { StatusBarAlignment, workspace } from "vscode";
+
+import CommandButton, { TerminalOptions } from "./types/command";
 
 export const getPackageJson = async (): Promise<undefined | any> =>
   new Promise(resolve => {
     const cwd = workspace.workspaceFolders[0].uri.fsPath;
 
     try {
-      const packageJson = require(`${cwd}/package.json`);
+      const packageJson = require(`${cwd}/package.json`); // eslint-disable-line @typescript-eslint/no-var-requires
 
       resolve(packageJson);
     } catch (e) {
@@ -32,11 +33,11 @@ export const buildConfigFromPackageJson = async (defaultColor: string) => {
     label: key,
     command: `npm run ${key}`,
     alignment: StatusBarAlignment.Left,
-    backgroundColor: BackgroundColor.Default,
     color: defaultColor,
     priority: 0,
     createButton: true,
     saveAll: false,
+    showButton: true,
     tooltip: null,
     terminal: terminalOptions,
     useVsCodeApi: false,
