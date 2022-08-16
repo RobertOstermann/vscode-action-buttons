@@ -1,9 +1,9 @@
-import { CommandOpts } from './types';
-import { workspace } from 'vscode';
+import { StatusBarAlignment, workspace } from 'vscode';
+import Command, { BackgroundColor, TerminalOptions } from "./types/command";
 
 export const getPackageJson = async (): Promise<undefined | any> =>
   new Promise(resolve => {
-    const cwd = workspace.rootPath;
+    const cwd = workspace.workspaceFolders[0].uri.fsPath;
 
     try {
       const packageJson = require(`${cwd}/package.json`);
@@ -21,10 +21,25 @@ export const buildConfigFromPackageJson = async (defaultColor: string) => {
   }
   const { scripts } = pkg;
 
-  return Object.keys(scripts).map(key => ({
-    command: `npm run ${key}`,
-    color: defaultColor || 'white',
-    name: key,
+  const terminalOptions: TerminalOptions = {
+    cwd: workspace.workspaceFolders[0].uri.fsPath,
+    focus: true,
     singleInstance: true
-  })) as CommandOpts[];
+  };
+
+  return Object.keys(scripts).map(key => ({
+    id: key,
+    label: key,
+    command: `npm run ${key}`,
+    alignment: StatusBarAlignment.Left,
+    backgroundColor: BackgroundColor.Default,
+    color: defaultColor,
+    priority: 0,
+    createButton: true,
+    saveAll: false,
+    tooltip: null,
+    terminal: terminalOptions,
+    useVsCodeApi: false,
+    args: [],
+  })) as Command[];
 };

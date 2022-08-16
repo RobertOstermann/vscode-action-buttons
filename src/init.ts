@@ -1,55 +1,46 @@
 import { buildConfigFromPackageJson } from './packageJson';
 import * as vscode from 'vscode';
-import { ButtonOpts, CommandOpts, DropdownOpts } from './types';
 import * as path from 'path';
+import Configuration from "./helpers/configuration";
+import Command from "./types/command";
+import Dropdown from "./types/dropdown";
 
 const registerCommand = vscode.commands.registerCommand;
 
-const disposables = [];
-
-const init = async (context: vscode.ExtensionContext) => {
-  disposables.forEach(d => d.dispose());
-  const extensionName = 'actionButtons';
+const init = async (context: vscode.ExtensionContext, disposables: Array<vscode.Disposable>): Promise<Array<vscode.Disposable>> => {
   const config = vscode.workspace.getConfiguration('actionButtons');
-  const defaultColor = config.get<string>('defaultColor');
-  const reloadButton = config.get<string>('reloadButton');
-  const loadNpmCommands = config.get<boolean>('loadNpmCommands');
-  const dropdowns = config.get<DropdownOpts[]>('dropdowns');
-  const cmds = config.get<CommandOpts[]>('commands');
-  const commands: CommandOpts[] = [];
+  const dropdowns = config.get<Dropdown[]>('dropdowns');
+  const commands: Command[] = [];
   const commandIds: Set<string> = new Set();
 
-  if (reloadButton !== null) {
-    loadButton({
-      command: 'extension.refreshButtons',
-      name: reloadButton,
-      tooltip: 'Refreshes the action buttons',
-      color: defaultColor
-    });
-  } else {
-    const onCfgChange: vscode.Disposable = vscode.workspace.onDidChangeConfiguration(e => {
-      if (e.affectsConfiguration('actionButtons')) {
-        vscode.commands.executeCommand('extension.refreshButtons');
-      }
-    });
-    context.subscriptions.push(onCfgChange);
-    disposables.push(onCfgChange);
+  if (Configuration.showReloadButton()) {
+    loadButton(
+      {
+        command: "actionButtons.refreshButtons",
+        label: Configuration.reloadButton(),
+        tooltip: "Refreshes the action buttons",
+        color: Configuration.defaultColor(),
+      },
+      disposables
+    );
   }
 
-  if (cmds && cmds.length) {
-    commands.push(...cmds);
+  if (Configuration.commands() && Configuration.commands().length) {
+    commands.push(...Configuration.commands());
   }
 
-  if (loadNpmCommands !== false) commands.push(...(await buildConfigFromPackageJson(defaultColor)));
+  if (Configuration.loadNpmCommands() !== false) {
+    commands.push(...(await buildConfigFromPackageJson(Configuration.defaultColor())));
+  }
 
   if (commands.length) {
     const terminals: { [name: string]: vscode.Terminal; } = {};
     commands.forEach(
-      ({ cwd, saveAll, command, id, name, createButton, tooltip, color, singleInstance, focus, useVsCodeApi, args }: CommandOpts) => {
-        const vsCommand = extensionName + '.' + id.replace(' ', '');
+      (command: Command) => {
+        const vsCommand = Configuration.extensionName + '.' + command.id.replace(' ', '');
 
         if (commandIds.has(vsCommand)) {
-          vscode.window.showErrorMessage(`The id '${id}' is used for multiple commands. Please remove duplicate id's.`);
+          vscode.window.showErrorMessage(`The id '${command.id}' is used for multiple commands. Please remove duplicate id's.`);
           return;
         }
         commandIds.add(vsCommand);
@@ -86,7 +77,7 @@ const init = async (context: vscode.ExtensionContext) => {
             fileExtname: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).ext : null,
 
             // - the task runner's current working directory on startup
-            cwd: cwd || rootPath || require('os').homedir(),
+            cwd: command.terminal.cwd || rootPath || require('os').homedir(),
 
             // - the current selected line number in the active file
             lineNumber: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.selection.active.line + 1 : null,
@@ -103,43 +94,45 @@ const init = async (context: vscode.ExtensionContext) => {
             return;
           }
 
-          if (saveAll) {
+          if (command.saveAll) {
             vscode.commands.executeCommand('workbench.action.files.saveAll');
           }
 
-          if (useVsCodeApi) {
-            vscode.commands.executeCommand(command, ...(args || []));
+          if (command.useVsCodeApi) {
+            vscode.commands.executeCommand(command.command, ...(command.args || []));
           } else {
-            let assocTerminal = terminals[vsCommand];
-            if (!assocTerminal) {
-              assocTerminal = vscode.window.createTerminal({ name, cwd: vars.cwd });
-              terminals[vsCommand] = assocTerminal;
+            let associatedTerminal = terminals[vsCommand];
+            if (!associatedTerminal) {
+              associatedTerminal = vscode.window.createTerminal({ name: command.label, cwd: vars.cwd });
+              terminals[vsCommand] = associatedTerminal;
             } else {
-              if (singleInstance) {
+              if (command.terminal.singleInstance) {
                 delete terminals[vsCommand];
-                assocTerminal.dispose();
-                assocTerminal = vscode.window.createTerminal({ name, cwd: vars.cwd });
-                terminals[vsCommand] = assocTerminal;
+                associatedTerminal.dispose();
+                associatedTerminal = vscode.window.createTerminal({ name: command.label, cwd: vars.cwd });
+                terminals[vsCommand] = associatedTerminal;
               } else {
-                assocTerminal.sendText('clear');
+                associatedTerminal.sendText('clear');
               }
             }
-            assocTerminal.show(!focus);
-            assocTerminal.sendText(interpolateString(command, vars));
+            associatedTerminal.show(!command.terminal.focus);
+            associatedTerminal.sendText(interpolateString(command.command, vars));
           }
         });
 
         context.subscriptions.push(disposable);
-
         disposables.push(disposable);
 
-        if (createButton) {
-          loadButton({
-            command: vsCommand,
-            name,
-            tooltip: tooltip || command,
-            color: color || defaultColor,
-          });
+        if (command.createButton) {
+          loadButton(
+            {
+              command: vsCommand,
+              label: command.label,
+              tooltip: command.tooltip || vsCommand,
+              color: command.color || Configuration.defaultColor(),
+            },
+            disposables
+          );
         }
       }
     );
@@ -151,21 +144,27 @@ const init = async (context: vscode.ExtensionContext) => {
   }
 
   if (commands.length && dropdowns.length) {
-    dropdowns.forEach((dropdown: DropdownOpts) => {
-      const vsCommand = extensionName + '.' + dropdown.id.replace(' ', '');
+    dropdowns.forEach((dropdown: Dropdown) => {
+      const vsCommand = Configuration.extensionName + "." + dropdown.id.replace(" ", "");
 
       if (commandIds.has(vsCommand)) {
-        vscode.window.showErrorMessage(`The id '${dropdown.id}' is used for multiple commands or dropdowns. Please remove duplicate id's.`);
+        vscode.window.showErrorMessage(
+          `The id '${dropdown.id}' is used for multiple commands or dropdowns. Please remove duplicate id's.`
+        );
         return;
       }
       commandIds.add(vsCommand);
 
-      const dropdownCommands = commands.filter((command) => dropdown.commands.includes(command.id) || dropdown.commands.includes(command.name));
+      const dropdownCommands = commands.filter(
+        (command: Command) =>
+          dropdown.commands.includes(command.id) ||
+          dropdown.commands.includes(command.label)
+      );
       const quickPickItems: vscode.QuickPickItem[] = [];
-      dropdownCommands.forEach((command: CommandOpts) => {
+      dropdownCommands.forEach((command: Command) => {
         const quickPickItem: vscode.QuickPickItem = {
-          label: command.name,
-          description: extensionName + '.' + command.id.replace(' ', '')
+          label: command.label,
+          description: Configuration.extensionName + "." + command.id.replace(" ", ""),
         };
         quickPickItems.push(quickPickItem);
       });
@@ -174,7 +173,7 @@ const init = async (context: vscode.ExtensionContext) => {
         const quickPick = vscode.window.createQuickPick();
         quickPick.items = quickPickItems;
         quickPick.ignoreFocusOut = dropdown.ignoreFocusOut || false;
-        quickPick.onDidChangeSelection(selection => {
+        quickPick.onDidChangeSelection((selection) => {
           if (selection[0]) {
             quickPick.hide();
             const quickPickCommand = selection[0].description;
@@ -189,26 +188,33 @@ const init = async (context: vscode.ExtensionContext) => {
 
       disposables.push(disposable);
 
-      loadButton({
-        command: vsCommand,
-        name: dropdown.name,
-        tooltip: dropdown.tooltip || null,
-        color: dropdown.color || defaultColor,
-      });
+      loadButton(
+        {
+          command: vsCommand,
+          label: dropdown.label,
+          tooltip: dropdown.tooltip || null,
+          color: dropdown.color || Configuration.defaultColor(),
+        },
+        disposables
+      );
     });
   }
+
+  return disposables;
 };
 
-function loadButton({
-  command,
-  name,
-  tooltip,
-  color,
-}: ButtonOpts) {
+/**
+ * @param ButtonOptions Button Options
+ * @param disposables An array of disposables
+ */
+function loadButton(
+  { command, label, tooltip, color }: Command,
+  disposables: Array<vscode.Disposable>
+) {
   const alignment = vscode.StatusBarAlignment.Left;
   const priority = 0;
   const runButton = vscode.window.createStatusBarItem(alignment, priority);
-  runButton.text = name;
+  runButton.text = label;
   runButton.color = color;
   runButton.tooltip = tooltip;
 
@@ -217,15 +223,16 @@ function loadButton({
   disposables.push(runButton);
 }
 
-function interpolateString(tpl: string, data: object): string {
-  let re = /\$\{([^\}]+)\}/g, match;
-  while (match = re.exec(tpl)) {
+function interpolateString(command: string, data: object): string {
+  let match: RegExpExecArray;
+  let regex = /\$\{([^\}]+)\}/g;
+  while (match = regex.exec(command)) {
     let path = match[1].split('.').reverse();
     let obj = data[path.pop()];
     while (path.length) obj = obj[path.pop()];
-    tpl = tpl.replace(match[0], obj);
+    command = command.replace(match[0], obj);
   }
-  return tpl;
+  return command;
 }
 
 export default init;
