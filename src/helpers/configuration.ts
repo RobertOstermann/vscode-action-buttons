@@ -1,3 +1,5 @@
+import * as fs from "fs";
+import * as glob from "glob";
 import { homedir } from "os";
 import * as path from "path";
 import * as vscode from "vscode";
@@ -12,25 +14,96 @@ export default class Configuration {
   /**
    * Initialize the configuration options that require a reload upon change.
    */
-  static initialize(context: vscode.ExtensionContext): vscode.Disposable {
-    if (this.showReloadButton()) return null;
+  static initialize(context: vscode.ExtensionContext): vscode.Disposable[] {
+    const disposables: vscode.Disposable[] = [];
+    if (Configuration.showReloadButton()) return disposables;
 
     const configurationChange = vscode.workspace.onDidChangeConfiguration((event) => {
-      if (event.affectsConfiguration(this.extensionName)) {
-        vscode.commands.executeCommand(`${this.extensionName}.refreshButtons`);
+      if (event.affectsConfiguration(Configuration.extensionName)) {
+        vscode.commands.executeCommand(`${Configuration.extensionName}.refreshButtons`);
       }
     });
-    context.subscriptions.push(configurationChange);
 
-    return configurationChange;
+    if (Configuration.configurationFilePath() !== null) {
+      const configurationFileChange = vscode.workspace.onDidSaveTextDocument((event) => {
+        if (event.uri.fsPath.replace(/\\/g, "/") === Configuration.configurationFilePath()) {
+          vscode.commands.executeCommand(`${Configuration.extensionName}.refreshButtons`);
+        }
+      });
+
+      context.subscriptions.push(configurationFileChange);
+      disposables.push(configurationFileChange);
+    }
+
+    context.subscriptions.push(configurationChange);
+    disposables.push(configurationChange);
+
+    return disposables;
+  }
+
+  /**
+   * Initialize the configuration options that require a reload upon change.
+   */
+  static extensionPath(context: vscode.ExtensionContext): string {
+    const extensionPath = context.extensionPath.replace(/\\/g, "/");
+
+    return extensionPath;
+  }
+
+  /**
+   * @returns Determines whether or not to use the configuration file.
+   */
+  static configurationFile(): boolean {
+    return vscode.workspace
+      .getConfiguration(Configuration.extensionName)
+      .get("configurationFile");
+  }
+
+
+  /**
+   * @returns The path to the configuration file.
+   */
+  static configurationFilePath(): any {
+    const workspaceFolder = vscode.workspace.workspaceFolders[0].uri.fsPath.replace(/\\/g, "/");
+    const pattern = "{**/statusBar.{json,jsonc},.vscode/statusBar.{json,jsonc}}";
+
+    const files = glob.sync(pattern, { cwd: workspaceFolder });
+
+    if (files[0] === undefined) return null;
+
+    return workspaceFolder + "/" + files[0];
+  }
+
+
+  /**
+   * @returns The JSON object for the configuration file.
+   */
+  static configurationFileJSON(): any {
+    const path = Configuration.configurationFilePath();
+    if (!Configuration.configurationFile() || path === null) return null;
+
+    let fileData = fs.readFileSync(path).toString();
+    // Strip the comments.
+    fileData = fileData.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m);
+    // Remove the default name of betterStatusBar.
+    fileData = fileData.replace(/betterStatusBar\./g, "");
+    const data = JSON.parse(fileData);
+
+    return data;
   }
 
   /**
    * @returns The color to use for action button text. The default is the theme color.
    */
   static defaultColor(): string {
+    if (Configuration.configurationFile()) {
+      const configuration = Configuration.configurationFileJSON();
+      const defaultColor = configuration?.defaultColor;
+      if (defaultColor !== undefined) defaultColor;
+    }
+
     return vscode.workspace
-      .getConfiguration(this.extensionName)
+      .getConfiguration(Configuration.extensionName)
       .get("defaultColor") || "statusBar.foreground";
   }
 
@@ -38,8 +111,14 @@ export default class Configuration {
    * @returns Automatically generate buttons from npm commands listed in `package.json`.
    */
   static loadNpmCommands(): boolean {
+    if (Configuration.configurationFile()) {
+      const configuration = Configuration.configurationFileJSON();
+      const loadNpmCommands = configuration?.loadNpmCommands;
+      if (loadNpmCommands !== undefined) return loadNpmCommands;
+    }
+
     return vscode.workspace
-      .getConfiguration(this.extensionName)
+      .getConfiguration(Configuration.extensionName)
       .get("loadNpmCommands");
   }
 
@@ -47,8 +126,14 @@ export default class Configuration {
    * @returns The text for the reload button. The default is to reload on configuration change and not show a reload button.
    */
   static reloadButton(): string | null {
+    if (Configuration.configurationFile()) {
+      const configuration = Configuration.configurationFileJSON();
+      const reloadButton = configuration?.reloadButton;
+      if (reloadButton !== undefined) return reloadButton;
+    }
+
     return vscode.workspace
-      .getConfiguration(this.extensionName)
+      .getConfiguration(Configuration.extensionName)
       .get<string | null>("reloadButton");
   }
 
@@ -56,8 +141,14 @@ export default class Configuration {
    * @returns The text for the reload button. The default is to reload on configuration change and not show a reload button.
    */
   static showReloadButton(): boolean {
+    if (Configuration.configurationFile()) {
+      const configuration = Configuration.configurationFileJSON();
+      const reloadButton = configuration?.reloadButton;
+      if (reloadButton !== undefined) return reloadButton !== null;
+    }
+
     return vscode.workspace
-      .getConfiguration(this.extensionName)
+      .getConfiguration(Configuration.extensionName)
       .get<string | null>("reloadButton") !== null;
   }
 
@@ -65,9 +156,18 @@ export default class Configuration {
    * @returns A list of action buttons for specified commands.
    */
   static commands(): Array<CommandButton> {
-    const commands = vscode.workspace
-      .getConfiguration(this.extensionName)
+    let commands = [];
+
+    if (Configuration.configurationFile()) {
+      const configuration = Configuration.configurationFileJSON();
+      commands = configuration?.commands ? configuration.commands : [];
+    }
+
+    const userCommands = vscode.workspace
+      .getConfiguration(Configuration.extensionName)
       .get<CommandButton[]>("commands");
+
+    commands = [...commands, ...userCommands];
 
     commands.forEach((command) => {
       // Set defaults for the undefined properties. ID, label, and command must be defined.
@@ -100,12 +200,21 @@ export default class Configuration {
    * @returns An action button that opens a quick-select of specified commands.
    */
   static dropdowns(): Array<DropdownButton> {
-    // Set defaults for the undefined properties. ID and label.
-    const dropdowns = vscode.workspace
-      .getConfiguration(this.extensionName)
+    let dropdowns = [];
+
+    if (Configuration.configurationFile()) {
+      const configuration = Configuration.configurationFileJSON();
+      dropdowns = configuration?.dropdowns ? configuration.dropdowns : [];
+    }
+
+    const userDropdowns = vscode.workspace
+      .getConfiguration(Configuration.extensionName)
       .get<DropdownButton[]>("dropdowns");
 
+    dropdowns = [...dropdowns, ...userDropdowns];
+
     dropdowns.forEach((dropdown) => {
+      // Set defaults for the undefined properties.
       if (dropdown.alignment === undefined) dropdown.alignment = vscode.StatusBarAlignment.Left;
       if (dropdown.color === undefined) dropdown.color = Configuration.defaultColor();
       if (dropdown.priority === undefined) dropdown.priority = 0;

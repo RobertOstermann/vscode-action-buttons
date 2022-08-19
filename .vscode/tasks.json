@@ -14,7 +14,7 @@
   "command": "npm",
 
   // we run the custom script "compile" as defined in package.json
-  "args": ["run", "compile", "--loglevel", "silent"],
+  "args": ["run", "watch", "--loglevel", "silent"],
 
   // The tsc compiler is started in watching mode
   "isBackground": true,
@@ -26,7 +26,7 @@
       "label": "npm",
       "type": "shell",
       "command": "npm",
-      "args": ["run", "compile", "--loglevel", "silent"],
+      "args": ["run", "watch", "--loglevel", "silent"],
       "isBackground": true,
       "problemMatcher": "$tsc-watch",
       "group": {

@@ -1,4 +1,4 @@
-# VsCode Action Buttons
+# Better Status Bar
 
 Add customizable buttons to the status bar to execute actions or tasks in VS Code.
 
@@ -17,13 +17,13 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 
 ## Installation and setup
 
-- [x] Install the `VsCode Action Buttons` extension in your VS Code instance.
-- [x] After installing, open your VS Code settings (`Ctrl + ,`). Navigate to the `VsCode Action Buttons` section.
+- [x] Install the `Better Status Bar` extension in your VS Code instance.
+- [x] After installing, open your VS Code settings (`Ctrl + ,`). Navigate to the `Better Status Bar` section.
 - [x] Define the action buttons you want. Below is a sample configuration for reference.
 - [x] Reload the VS Code window to see the new buttons. Alternatively, you can run the `Refresh Action Buttons` command to refresh without reloading the window.
 
 ```json
-	"actionButtons": {
+	"betterStatusBar": {
 		 "defaultColor": "#ff0034", // Can also use string color names.
 		 "loadNpmCommands":false, // Disables automatic generation of actions for npm commands.
 		 "reloadButton":"♻️", // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
@@ -77,7 +77,7 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 ### Command Options
 
 - **id**
-  - The id of the action button. This field is required. The ID is prepended with the extension name (actionButtons) to create the vscode command id and can be used to create keyboard shortcuts. This field should not contain spaces or special characters.
+  - The id of the action button. This field is required. The ID is prepended with the extension name (betterStatusBar) to create the vscode command id and can be used to create keyboard shortcuts. This field should not contain spaces or special characters.
 - **name**
   - Name of the action button. This field is required. You can add icons in command name by typing `$(icon-name)`. Look [here](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) for icons. (Note: If you will misspell no icons will show)
 - **saveAll**
@@ -103,7 +103,7 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 ### Command Options
 
 - **id**
-  - The id of the action button. This field is required. The ID is prepended with the extension name (actionButtons) to create the vscode command id and can be used to create keyboard shortcuts. This field should not contain spaces or special characters.
+  - The id of the action button. This field is required. The ID is prepended with the extension name (betterStatusBar) to create the vscode command id and can be used to create keyboard shortcuts. This field should not contain spaces or special characters.
 - **name**
   - Name of the action button. This field is required. You can add icons in command name by typing `$(icon-name)`. Look [here](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) for icons. (Note: If you will misspell no icons will show)
 - **commands**
@@ -118,7 +118,7 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 Keyboard Shortcuts can be set up for each of the commands/dropdowns that have been created.
 
 - Go to File -> Preferences -> Keyboard Shortcuts to manually set keyboard shortcuts.
-- Search for **actionButtons**
+- Search for **betterStatusBar**
   - If the commands are not available/correct, try refreshing action buttons or reloading the window
 - There should now be a list of commands with the specified ids (from settings.json)
 - Set the desired keyboard shortcut

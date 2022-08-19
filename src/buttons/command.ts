@@ -21,7 +21,7 @@ export default class Command {
         const vsCommand = Configuration.extensionName + "." + command.id.replace(" ", "");
 
         if (commandIds.has(vsCommand)) {
-          vscode.window.showErrorMessage(`The id '${command.id}' is used for multiple commands. Please remove duplicate id's.`);
+          vscode.window.showErrorMessage(`The id '${command.id}' is used for multiple commands or dropdowns. Please remove duplicate id's.`);
           return;
         }
         commandIds.add(vsCommand);

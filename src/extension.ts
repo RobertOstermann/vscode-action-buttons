@@ -12,9 +12,8 @@ const initialize = async (context: vscode.ExtensionContext): Promise<void> => {
   disposables.splice(0, disposables.length);
 
   // Add the new action buttons to the list of disposables.
-  const disposable = Configuration.initialize(context);
+  disposables = Configuration.initialize(context);
   disposables = await init(context, disposables);
-  if (disposable !== null) disposables.push(disposable);
 };
 
 export function activate(context: vscode.ExtensionContext) {
