@@ -18,110 +18,75 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 ## Installation and setup
 
 - [x] Install the `Better Status Bar` extension in your VS Code instance.
-- [x] After installing, open your VS Code settings (`Ctrl + ,`). Navigate to the `Better Status Bar` section.
-- [x] Define the action buttons you want. Below is a sample configuration for reference.
+- [x] After installing, open your VS Code settings.json file.
+- [x] Define the status bar buttons you want. Below is a sample configuration for reference.
 - [x] Reload the VS Code window to see the new buttons. Alternatively, you can run the `Refresh Action Buttons` command to refresh without reloading the window.
 
 ```json
-	"betterStatusBar": {
-		 "defaultColor": "#ff0034", // Can also use string color names.
-		 "loadNpmCommands":false, // Disables automatic generation of actions for npm commands.
-		 "reloadButton":"♻️", // Custom reload button text or icon (default ↻). null value enables automatic reload on configuration change
-		 "commands": [
-			 {
-				"id": "runCargo", // This can be used to display in the dropdowns. This should not have any spaces.
-				"createButton": true, // Set this to false if the button is used in a dropdown and should not show on the status bar
-				"cwd": "/home/custom_folder", 	// Terminal initial folder ${workspaceFolder} and os user home as defaults
-				"name": "$(triangle-right) Run Cargo",
-				"color": "green",
-				"singleInstance": true,
-				"command": "cargo run ${file}", // This is executed in the terminal.
-			 },
-			 {
-				"id": "buildCargo",
-				"name": "$(tools) Build Cargo",
-				"command": "cargo build ${file}",
-				"createButton": false,
-			 },
-			 {
-				"id": "split.editor",
-				"name": "$(split-horizontal) Split editor",
-				"command": "workbench.action.splitEditor",
-				"color": "orange",
-				"useVsCodeApi": true,
-		     }
-		 ],
-		 "dropdowns": [
-			{
-				"id": "dropdown",
-				"name": "Dropdown",
-				"commands": ["runCargo", "$(tools) Build Cargo", "split.editor"], // The id or name can be used to define commands in the quick-pick dropdown.
-				"color": "white",
-				"tooltip": "test"
-			}
-		],
-	 }
+{
+  // Better Status Bar
+  "betterStatusBar.defaultColor": "statusBar.foreground",
+  "betterStatusBar.configurationFile": true,
+  "betterStatusBar.loadNpmCommands": false,
+  "betterStatusBar.reloadButton": "Refresh Status Bar",
+  "betterStatusBar.commands": [
+    {
+      "id": "3",
+      "label": "Git Status",
+      "command": "git status",
+      "tooltip": "STATUS",
+      "color": "blue",
+      "terminal": {
+        "name": "test",
+        "focus": false,
+        "singleInstance": true,
+        "clear": false
+      }
+    },
+    {
+      "id": "4",
+      "label": "Git Status 2",
+      "command": "git status",
+      "alignment": 2,
+      "priority": 1000,
+      "terminal": {
+        "name": "test",
+        "focus": false,
+        "singleInstance": true,
+        "clear": false
+      }
+    }
+  ],
+  "betterStatusBar.dropdowns": [
+    {
+      "id": "5",
+      "label": "Dropdown",
+      "commands": ["status"],
+      "options": {
+        "placeholder": "temp",
+        "ignoreFocusOut": true,
+        "title": "temp"
+      }
+    }
+  ]
+}
 ```
 
-## Config Options
+## Configuration File
 
-- **reloadButton**
-  - Text for reload actions button. Defaults to `↻`. If null, the reload button is disabled.
-- **defaultColor**
-  - Default text color of action buttons. Defaults to `white`. To set default theme color type `none`.
-- **loadNpmCommands**
-  - Whether or not to automatically generate action buttons from commands specified in `package.json`. Defaults to `false`.
-- **commands**
-  - List of action buttons to add to the status bar. Defaults to `[]`. See below for a list of valid options for each command
-
-### Command Options
-
-- **id**
-  - The id of the action button. This field is required. The ID is prepended with the extension name (betterStatusBar) to create the vscode command id and can be used to create keyboard shortcuts. This field should not contain spaces or special characters.
-- **name**
-  - Name of the action button. This field is required. You can add icons in command name by typing `$(icon-name)`. Look [here](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) for icons. (Note: If you will misspell no icons will show)
-- **saveAll**
-  - Save all open files before execute command
-- **command**
-  - Command to execute when action is activated. This field is required.
-  - If `useVsCodeApi` is `true`, this is the VS Code command to execute. Otherwise, this specifies the command to execute in the terminal
-- **color**
-  - Specifies the action button text color. Defaults to `defaultColor`.
-- **tooltip**
-  - Tooltip text to display when hovering over the button. Defaults to `command`.
-- **cwd**
-  - Start directory when executing terminal command. Defaults to `${workspaceFolder}`. Only valid when `useVsCodeApi` is `false`
-- **singleInstance**
-  - Reopen associated terminal each time this action is activated. Defaults to `false`. Only valid when `useVsCodeApi` is `false`
-- **focus**
-  - Focus the terminal after executing the command. Defaults to `false`. Only valid when `useVsCodeApi` is `false`
-- **useVsCodeApi**
-  - Specifies whether to execute a VS Code command or terminal command. Defaults to `false`.
-- **args**
-  - Specifies additional arguments to pass to VS Code command. Only valid when `useVsCodeApi` is `true`.
-
-### Command Options
-
-- **id**
-  - The id of the action button. This field is required. The ID is prepended with the extension name (betterStatusBar) to create the vscode command id and can be used to create keyboard shortcuts. This field should not contain spaces or special characters.
-- **name**
-  - Name of the action button. This field is required. You can add icons in command name by typing `$(icon-name)`. Look [here](https://code.visualstudio.com/api/references/icons-in-labels#icon-listing) for icons. (Note: If you will misspell no icons will show)
-- **commands**
-  - Commands to show in the quick-select dropdown.
-- **color**
-  - Specifies the action button text color. Defaults to `defaultColor`.
-- **tooltip**
-  - Tooltip text to display when hovering over the button. Defaults to null (no tooltip).
+You can create a `statusBar.json` file to add the settings to a different place than the settings.json file.
+The settings in `statusBar.json` overrides the `settings.json` properties.
+The commands and dropdowns from `statusBar.json` and `settings.json` are combined.
 
 ## Keyboard Shortcuts
 
 Keyboard Shortcuts can be set up for each of the commands/dropdowns that have been created.
 
 - Go to File -> Preferences -> Keyboard Shortcuts to manually set keyboard shortcuts.
-- Search for **betterStatusBar**
-  - If the commands are not available/correct, try refreshing action buttons or reloading the window
-- There should now be a list of commands with the specified ids (from settings.json)
-- Set the desired keyboard shortcut
+- Search for **betterStatusBar**.
+  - If the commands are not available/correct, try refreshing action buttons or reloading the window.
+- There should now be a list of commands with the specified ids (from settings.json).
+- Set the desired keyboard shortcut.
 
 ## Config Vars
 
@@ -140,50 +105,8 @@ As seen in the previous example, vars such as `${file}` can be used. Below is a 
 - `selectedText` - the current selected text in the active file
 - `execPath` - the path to the running VS Code executable
 
-## Release Notes
+## Credits
 
-### v1.1.5
-
-Added support for VSCode API calls
-Added `api` option.
-
-### v1.1.4
-
-Added support for VSCode predefined variables as ${file}
-Added `cwd` option.
-Added `reloadButton` option.
-
-### v1.1.3
-
-Added `loadNpmCommands` option.
-
-### v1.1.2
-
-### v1.1.0
-
-Added `Refresh Action Buttons` action button
-
-### v1.0.0
-
-Changed configuration name from `run` to `actionButton`
-Better support for js projects
-
-### v0.0.8
-
-Added `singleInstance` option.
-
-### v0.0.7
-
-Added support for default Colors
-
-### v0.0.6
-
-Added support for reading actions from the scripts segment of package.json.
-
-### v0.0.3
-
-Better documentation.
-
-### v0.0.1
-
-Initial Release
+- [seunlanlege](https://github.com/seunlanlege) for the original extension [vscode-action-buttons](https://github.com/seunlanlege/vscode-action-buttons)
+- [VSCode's Extension Samples](https://github.com/microsoft/vscode-extension-samples/tree/master/decorator-sample), which was a huge help to get started
+- [All Contributors](../../contributors)
