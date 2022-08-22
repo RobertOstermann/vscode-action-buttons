@@ -45,7 +45,7 @@ export default class Command {
 
             let associatedTerminal = vscode.window.terminals.find(terminal => terminal.name === terminalName);
             if (!associatedTerminal || !command.terminal.singleInstance) {
-              associatedTerminal = vscode.window.createTerminal(variables.cwd ? { name: terminalName } : { name: terminalName, cwd: variables.cwd });
+              associatedTerminal = vscode.window.createTerminal({ name: terminalName, cwd: variables.cwd });
             }
 
             if (command.terminal.clear) {

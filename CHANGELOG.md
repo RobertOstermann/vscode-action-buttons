@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.2] - 2022-08-22
+
+- Fix the cwd setting.
+
 ## [1.0.1] - 2022-08-22
 
 - Allow the `statusBar.json` configuration file path to be set in the user settings.
