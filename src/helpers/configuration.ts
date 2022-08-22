@@ -53,7 +53,16 @@ export default class Configuration {
   /**
    * @returns Determines whether or not to use the configuration file.
    */
-  static configurationFile(): boolean {
+  static useConfigurationFile(): boolean {
+    const configurationFile = Configuration.configurationFile() || "";
+
+    return configurationFile === "" ? false : true;
+  }
+
+  /**
+   * @returns Determines whether or not to use the configuration file.
+   */
+  static configurationFile(): string {
     return vscode.workspace
       .getConfiguration(Configuration.extensionName)
       .get("configurationFile");
@@ -64,14 +73,24 @@ export default class Configuration {
    * @returns The path to the configuration file.
    */
   static configurationFilePath(): any {
-    const workspaceFolder = vscode.workspace.workspaceFolders[0].uri.fsPath.replace(/\\/g, "/");
+    const configurationFile = Configuration.configurationFile() || "";
     const pattern = "{**/statusBar.{json,jsonc},.vscode/statusBar.{json,jsonc}}";
 
-    const files = glob.sync(pattern, { cwd: workspaceFolder });
+    if (configurationFile.toLowerCase() === "find") {
+      let folder = "";
+      let files = [];
+      vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
+        if (files[0] !== undefined) return;
 
-    if (files[0] === undefined) return null;
+        folder = workspaceFolder.uri.fsPath.replace(/\\/g, "/");
+        files = glob.sync(pattern, { cwd: folder });
+      });
 
-    return workspaceFolder + "/" + files[0];
+      if (files[0] === undefined) return null;
+      return folder + "/" + files[0];
+    } else {
+      return configurationFile;
+    }
   }
 
 
@@ -80,7 +99,7 @@ export default class Configuration {
    */
   static configurationFileJSON(): any {
     const path = Configuration.configurationFilePath();
-    if (!Configuration.configurationFile() || path === null) return null;
+    if (!Configuration.useConfigurationFile() || path === null) return null;
 
     let fileData = fs.readFileSync(path).toString();
     // Strip the comments.
@@ -96,7 +115,7 @@ export default class Configuration {
    * @returns The color to use for action button text. The default is the theme color.
    */
   static defaultColor(): string {
-    if (Configuration.configurationFile()) {
+    if (Configuration.useConfigurationFile()) {
       const configuration = Configuration.configurationFileJSON();
       const defaultColor = configuration?.defaultColor;
       if (defaultColor !== undefined) defaultColor;
@@ -111,7 +130,7 @@ export default class Configuration {
    * @returns Automatically generate buttons from npm commands listed in `package.json`.
    */
   static loadNpmCommands(): boolean {
-    if (Configuration.configurationFile()) {
+    if (Configuration.useConfigurationFile()) {
       const configuration = Configuration.configurationFileJSON();
       const loadNpmCommands = configuration?.loadNpmCommands;
       if (loadNpmCommands !== undefined) return loadNpmCommands;
@@ -126,7 +145,7 @@ export default class Configuration {
    * @returns The text for the reload button. The default is to reload on configuration change and not show a reload button.
    */
   static reloadButton(): string | null {
-    if (Configuration.configurationFile()) {
+    if (Configuration.useConfigurationFile()) {
       const configuration = Configuration.configurationFileJSON();
       const reloadButton = configuration?.reloadButton;
       if (reloadButton !== undefined) return reloadButton;
@@ -141,7 +160,7 @@ export default class Configuration {
    * @returns The text for the reload button. The default is to reload on configuration change and not show a reload button.
    */
   static showReloadButton(): boolean {
-    if (Configuration.configurationFile()) {
+    if (Configuration.useConfigurationFile()) {
       const configuration = Configuration.configurationFileJSON();
       const reloadButton = configuration?.reloadButton;
       if (reloadButton !== undefined) return reloadButton !== null;
@@ -158,7 +177,7 @@ export default class Configuration {
   static commands(): Array<CommandButton> {
     let commands = [];
 
-    if (Configuration.configurationFile()) {
+    if (Configuration.useConfigurationFile()) {
       const configuration = Configuration.configurationFileJSON();
       commands = configuration?.commands ? configuration.commands : [];
     }
@@ -202,7 +221,7 @@ export default class Configuration {
   static dropdowns(): Array<DropdownButton> {
     let dropdowns = [];
 
-    if (Configuration.configurationFile()) {
+    if (Configuration.useConfigurationFile()) {
       const configuration = Configuration.configurationFileJSON();
       dropdowns = configuration?.dropdowns ? configuration.dropdowns : [];
     }

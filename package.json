@@ -2,7 +2,7 @@
   "name": "better-status-bar",
   "displayName": "Better Status Bar",
   "description": "Add customizable buttons to the status bar to execute actions or tasks",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "RobertOstermann",
   "repository": {
     "type": "git",
@@ -42,10 +42,10 @@
           "markdownDescription": "The color to use for action button text. The default is the theme color."
         },
         "betterStatusBar.configurationFile": {
-          "type": "boolean",
+          "type": "string",
           "required": false,
-          "default": false,
-          "markdownDescription": "Use a configuration file named `statusBar.json` located in the workspace."
+          "default": "",
+          "markdownDescription": "Use a configuration file named `statusBar.json` located in the workspace. Set this to `Find` to search for the configuration file in the workspace."
         },
         "betterStatusBar.loadNpmCommands": {
           "type": "boolean",
