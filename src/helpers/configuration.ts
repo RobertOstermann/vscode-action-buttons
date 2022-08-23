@@ -26,7 +26,7 @@ export default class Configuration {
 
     if (Configuration.configurationFilePath() !== null) {
       const configurationFileChange = vscode.workspace.onDidSaveTextDocument((event) => {
-        if (event.uri.fsPath.replace(/\\/g, "/") === Configuration.configurationFilePath()) {
+        if (event.uri.fsPath.replace(/\\/g, "/").toLowerCase() === Configuration.configurationFilePath().toLowerCase()) {
           vscode.commands.executeCommand(`${Configuration.extensionName}.refreshButtons`);
         }
       });
@@ -72,7 +72,7 @@ export default class Configuration {
   /**
    * @returns The path to the configuration file.
    */
-  static configurationFilePath(): any {
+  static configurationFilePath(): string {
     const configurationFile = Configuration.configurationFile() || "";
     const pattern = "{**/statusBar.{json,jsonc},.vscode/statusBar.{json,jsonc}}";
 

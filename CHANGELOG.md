@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.3] - 2022-08-23
+
+- Ensure the configuration file save works.
+
 ## [1.0.2] - 2022-08-22
 
 - Fix the cwd setting.
