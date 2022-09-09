@@ -2,7 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
-## [1.0.4] - 2022-08-23
+## [1.0.5] - 2022-09-09
+
+- Update the schema file naming options.
+
+## [1.0.4] - 2022-09-09
 
 - Reword some descriptions in the json schema.
 

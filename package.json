@@ -2,7 +2,7 @@
   "name": "better-status-bar",
   "displayName": "Better Status Bar",
   "description": "Add customizable buttons to the status bar to execute actions or tasks",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "RobertOstermann",
   "repository": {
     "type": "git",
@@ -144,7 +144,7 @@
                   "cwd": {
                     "type": [
                       "string",
-                      null
+                      "null"
                     ],
                     "default": null,
                     "markdownDescription": "The start directory when executing terminal command."
@@ -164,7 +164,7 @@
               "tooltip": {
                 "type": [
                   "string",
-                  null
+                  "null"
                 ],
                 "default": null,
                 "markdownDescription": "Tooltip text to display when hovering over the button."
@@ -249,7 +249,7 @@
               "tooltip": {
                 "type": [
                   "string",
-                  null
+                  "null"
                 ],
                 "default": null,
                 "markdownDescription": "Tooltip text to display when hovering over the button."
@@ -267,7 +267,7 @@
                   "placeholder": {
                     "type": [
                       "string",
-                      null
+                      "null"
                     ],
                     "default": null,
                     "markdownDescription": "Optional placeholder in the filter text."
@@ -275,7 +275,7 @@
                   "title": {
                     "type": [
                       "string",
-                      null
+                      "null"
                     ],
                     "default": null,
                     "markdownDescription": "An optional title."
@@ -290,8 +290,24 @@
     "jsonValidation": [
       {
         "fileMatch": [
+          "statusbar.json",
+          "statusbar.jsonc",
           "statusBar.json",
-          "statusBar.jsonc"
+          "statusBar.jsonc",
+          "Statusbar.json",
+          "Statusbar.jsonc",
+          "StatusBar.json",
+          "StatusBar.jsonc",
+          "betterstatusbar.json",
+          "betterstatusbar.jsonc",
+          "betterStatusbar.json",
+          "betterStatusbar.jsonc",
+          "betterStatusBar.json",
+          "betterStatusBar.jsonc",
+          "BetterstatusBar.json",
+          "BetterstatusBar.jsonc",
+          "BetterStatusBar.json",
+          "BetterStatusBar.jsonc"
         ],
         "url": "./out/src/schema/statusBar.schema.json"
       }

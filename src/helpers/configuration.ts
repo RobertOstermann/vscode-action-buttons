@@ -74,7 +74,8 @@ export default class Configuration {
    */
   static configurationFilePath(): string {
     const configurationFile = Configuration.configurationFile() || "";
-    const pattern = "{**/statusBar.{json,jsonc},.vscode/statusBar.{json,jsonc}}";
+    // TODO: Add more options
+    const pattern = "{**/{s,S}tatus{b,B}ar.{json,jsonc},**/{b,B}etter{s,S}tatus{b,B}ar.{json,jsonc},.vscode/{s,S}tatus{b,B}ar.{json,jsonc}},.vscode/{b,B}etter{s,S}tatus{b,B}ar.{json,jsonc}}";
 
     if (configurationFile.toLowerCase() === "find") {
       let folder = "";

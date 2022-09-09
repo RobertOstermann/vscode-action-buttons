@@ -85,7 +85,7 @@
             "markdownDescription": "The terminal settings for this command. Only valid when `useVsCodeApi = false`.",
             "properties": {
               "name": {
-                "type": "string",
+                "type": ["string", "null"],
                 "default": null,
                 "markdownDescription": "The name of the terminal for this command. If a terminal with this name is already open then the terminal will be re-used."
               },
@@ -95,7 +95,7 @@
                 "markdownDescription": "Determines if the terminal is cleared before the specified command is run."
               },
               "cwd": {
-                "type": ["string", null],
+                "type": ["string", "null"],
                 "default": null,
                 "markdownDescription": "The start directory when executing terminal command."
               },
@@ -112,7 +112,7 @@
             }
           },
           "tooltip": {
-            "type": ["string", null],
+            "type": ["string", "null"],
             "default": null,
             "markdownDescription": "Tooltip text to display when hovering over the button."
           },
@@ -188,7 +188,7 @@
             "markdownDescription": "Determines if the status bar button is shown on the status bar."
           },
           "tooltip": {
-            "type": ["string", null],
+            "type": ["string", "null"],
             "default": null,
             "markdownDescription": "Tooltip text to display when hovering over the button."
           },
@@ -203,12 +203,12 @@
                 "markdownDescription": "Determines if the dropdown should stay open even when loosing dropdown focus."
               },
               "placeholder": {
-                "type": ["string", null],
+                "type": ["string", "null"],
                 "default": null,
                 "markdownDescription": "Optional placeholder in the filter text."
               },
               "title": {
-                "type": ["string", null],
+                "type": ["string", "null"],
                 "default": null,
                 "markdownDescription": "An optional title."
               }
