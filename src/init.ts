@@ -18,7 +18,7 @@ const init = async (context: vscode.ExtensionContext, disposables: vscode.Dispos
       color: Configuration.defaultColor(),
       command: Configuration.extensionName + ".refreshButtons",
       label: Configuration.reloadButton(),
-      tooltip: "Refresh the action buttons.",
+      tooltip: "Refresh the status bar buttons.",
       priority: 0
     };
 

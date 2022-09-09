@@ -100,6 +100,7 @@ export default class Configuration {
   static configurationFileJSON(): any {
     const path = Configuration.configurationFilePath();
     if (!Configuration.useConfigurationFile() || path === null) return null;
+    if (!fs.existsSync(path)) return null;
 
     let fileData = fs.readFileSync(path).toString();
     // Strip the comments.
@@ -112,7 +113,7 @@ export default class Configuration {
   }
 
   /**
-   * @returns The color to use for action button text. The default is the theme color.
+   * @returns The color to use for status bar button text. The default is the theme color.
    */
   static defaultColor(): string {
     if (Configuration.useConfigurationFile()) {
@@ -172,7 +173,7 @@ export default class Configuration {
   }
 
   /**
-   * @returns A list of action buttons for specified commands.
+   * @returns A list of status bar buttons for specified commands.
    */
   static commands(): Array<CommandButton> {
     let commands = [];
@@ -216,7 +217,7 @@ export default class Configuration {
   }
 
   /**
-   * @returns An action button that opens a quick-select of specified commands.
+   * @returns A status bar button that opens a quick-select of specified commands.
    */
   static dropdowns(): Array<DropdownButton> {
     let dropdowns = [];

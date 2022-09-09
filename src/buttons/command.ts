@@ -9,7 +9,7 @@ export default class Command {
   static createCommands(context: vscode.ExtensionContext, commands: CommandButton[], commandIds: Set<string>, disposables: vscode.Disposable[]): void {
     if (!commands.length) {
       vscode.window.setStatusBarMessage(
-        "VsCode Action Buttons: You have no run commands.",
+        "Status Bar Buttons: You have no commands or dropdowns.",
         4000
       );
 

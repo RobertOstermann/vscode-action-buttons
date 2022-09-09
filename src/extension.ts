@@ -7,11 +7,11 @@ import init from "./init";
 let disposables: vscode.Disposable[] = [];
 
 const initialize = async (context: vscode.ExtensionContext): Promise<void> => {
-  // Clean up the previous action buttons.
+  // Clean up the previous status bar buttons.
   disposables.forEach((disposable: vscode.Disposable) => disposable.dispose());
   disposables.splice(0, disposables.length);
 
-  // Add the new action buttons to the list of disposables.
+  // Add the new status bar buttons to the list of disposables.
   disposables = Configuration.initialize(context);
   disposables = await init(context, disposables);
 };

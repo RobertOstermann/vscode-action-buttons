@@ -8,7 +8,7 @@
       "type": "string",
       "required": false,
       "default": "statusBar.foreground",
-      "markdownDescription": "The color to use for action button text. The default is the theme color."
+      "markdownDescription": "The color to use for status bar button text. The default is the theme color."
     },
     "betterStatusBar.loadNpmCommands": {
       "type": "boolean",
@@ -25,7 +25,7 @@
     "betterStatusBar.commands": {
       "type": "array",
       "default": [],
-      "markdownDescription": "A list of action buttons for specified commands.",
+      "markdownDescription": "A list of status bar buttons for specified commands.",
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -39,15 +39,15 @@
         "properties": {
           "id": {
             "type": "string",
-            "markdownDescription": "The unique ID of the action button. The ID is prepended with the extension name (betterStatusBar) and can be used to create keyboard shortcuts."
+            "markdownDescription": "The unique ID of the status bar button. The ID is prepended with the extension name (betterStatusBar) and can be used to create keyboard shortcuts."
           },
           "label": {
             "type": "string",
-            "markdownDescription": "The label for the action button."
+            "markdownDescription": "The label for the status bar button."
           },
           "command": {
             "type": "string",
-            "markdownDescription": "Command to execute when action is activated.\n\nThis specifies the command to execute in the terminal.\nIf `useVsCodeApi` is `true`, this is the VS Code command to execute."
+            "markdownDescription": "Command to execute when the status bar button is selected.\n\nThis specifies the command to execute in the terminal.\nIf `useVsCodeApi` is `true`, this is the VS Code command to execute."
           },
           "alignment": {
             "type": "number",
@@ -57,12 +57,12 @@
               "Aligned to the left side.",
               "Aligned to the right side."
             ],
-            "markdownDescription": "The alignment of the action button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
+            "markdownDescription": "The alignment of the status bar button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
           },
           "color": {
             "type": "string",
             "default": "statusBar.foreground",
-            "markdownDescription": "Specifies the action button text color."
+            "markdownDescription": "Specifies the status bar button text color."
           },
           "priority": {
             "type": "number",
@@ -77,7 +77,7 @@
           "showButton": {
             "type": "boolean",
             "default": true,
-            "markdownDescription": "Determines if the action button is shown on the status bar."
+            "markdownDescription": "Determines if the status bar button is shown on the status bar."
           },
           "terminal": {
             "type": "object",
@@ -134,7 +134,7 @@
     },
     "betterStatusBar.dropdowns": {
       "type": "array",
-      "markdownDescription": "An action button that opens a quick-select of specified commands.",
+      "markdownDescription": "A status bar button that opens a quick-select of specified commands.",
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -170,7 +170,7 @@
               "Aligned to the left side.",
               "Aligned to the right side."
             ],
-            "markdownDescription": "The alignment of the action button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
+            "markdownDescription": "The alignment of the status bar button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
           },
           "color": {
             "type": "string",
@@ -185,7 +185,7 @@
           "showButton": {
             "type": "boolean",
             "default": true,
-            "markdownDescription": "Determines if the action button is shown on the status bar."
+            "markdownDescription": "Determines if the status bar button is shown on the status bar."
           },
           "tooltip": {
             "type": ["string", null],
