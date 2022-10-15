@@ -2,7 +2,7 @@
   "name": "better-status-bar",
   "displayName": "Better Status Bar",
   "description": "Add customizable buttons to the status bar to execute actions or tasks",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "publisher": "RobertOstermann",
   "repository": {
     "type": "git",

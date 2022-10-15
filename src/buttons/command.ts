@@ -76,15 +76,18 @@ export default class Command {
     );
   }
 
-  static interpolateString(command: string, data: object): string {
-    let match: RegExpExecArray;
+  static interpolateString(command: string, variables: object): string {
     const regex = /\$\{([^\}]+)\}/g; // eslint-disable-line no-useless-escape
-    while (match = regex.exec(command)) { // eslint-disable-line no-cond-assign
-      const path = match[1].split(".").reverse();
-      let arg = data[path.pop()];
-      while (path.length) arg = arg[path.pop()];
-      command = command.replace(match[0], arg);
+
+    const match = command.match(regex);
+    while (match.length) {
+      const placeholder = match.pop();
+      const argument = placeholder.replace("${", "").replace("}", "");
+      const path = argument;
+      const variable = variables[path];
+      command = command.replace(placeholder, variable);
     }
+
     return command;
   }
 }
