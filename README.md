@@ -55,6 +55,13 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
         "singleInstance": true,
         "clear": false
       }
+    },
+    {
+      "id": "split.editor",
+      "label": "$(split-horizontal) Split editor",
+      "command": "workbench.action.splitEditor",
+      "color": "orange",
+      "useVsCodeApi": true
     }
   ],
   "betterStatusBar.dropdowns": [
