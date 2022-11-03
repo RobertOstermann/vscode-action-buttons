@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.8] - 2022-11-02
+
+- Fix bug when no variables are present.
+
 ## [1.0.7] - 2022-10-22
 
 - Slight change to the README.

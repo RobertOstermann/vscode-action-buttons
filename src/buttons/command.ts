@@ -80,7 +80,7 @@ export default class Command {
     const regex = /\$\{([^\}]+)\}/g; // eslint-disable-line no-useless-escape
 
     const match = command.match(regex);
-    while (match.length) {
+    while (match?.length) {
       const placeholder = match.pop();
       const argument = placeholder.replace("${", "").replace("}", "");
       const path = argument;
