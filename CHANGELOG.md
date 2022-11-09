@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.9] - 2022-11-09
+
+- Add defaults for some configuration options.
+- Do not error on invalid json in configuration file. Extension will work again once json is fixed.
+
 ## [1.0.8] - 2022-11-02
 
 - Fix bug when no variables are present.

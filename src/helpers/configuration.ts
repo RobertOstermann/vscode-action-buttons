@@ -108,9 +108,12 @@ export default class Configuration {
     fileData = fileData.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m);
     // Remove the default name of betterStatusBar.
     fileData = fileData.replace(/betterStatusBar\./g, "");
-    const data = JSON.parse(fileData);
-
-    return data;
+    try {
+      return JSON.parse(fileData);
+    } catch (error) {
+      console.log("Error parsing configuration file.")
+      return null;
+    }
   }
 
   /**
@@ -125,7 +128,7 @@ export default class Configuration {
 
     return vscode.workspace
       .getConfiguration(Configuration.extensionName)
-      .get("defaultColor") || "statusBar.foreground";
+      .get<string>("defaultColor", "statusBar.foreground");
   }
 
   /**
@@ -140,7 +143,7 @@ export default class Configuration {
 
     return vscode.workspace
       .getConfiguration(Configuration.extensionName)
-      .get("loadNpmCommands");
+      .get<boolean>("loadNpmCommands", false);
   }
 
   /**
@@ -155,22 +158,14 @@ export default class Configuration {
 
     return vscode.workspace
       .getConfiguration(Configuration.extensionName)
-      .get<string | null>("reloadButton");
+      .get<string | null>("reloadButton", null);
   }
 
   /**
    * @returns The text for the reload button. The default is to reload on configuration change and not show a reload button.
    */
   static showReloadButton(): boolean {
-    if (Configuration.useConfigurationFile()) {
-      const configuration = Configuration.configurationFileJSON();
-      const reloadButton = configuration?.reloadButton;
-      if (reloadButton !== undefined) return reloadButton !== null;
-    }
-
-    return vscode.workspace
-      .getConfiguration(Configuration.extensionName)
-      .get<string | null>("reloadButton") !== null;
+    return Configuration.reloadButton() !== null;
   }
 
   /**
@@ -186,7 +181,7 @@ export default class Configuration {
 
     const userCommands = vscode.workspace
       .getConfiguration(Configuration.extensionName)
-      .get<CommandButton[]>("commands");
+      .get<CommandButton[]>("commands", []);
 
     commands = [...commands, ...userCommands];
 
@@ -230,7 +225,7 @@ export default class Configuration {
 
     const userDropdowns = vscode.workspace
       .getConfiguration(Configuration.extensionName)
-      .get<DropdownButton[]>("dropdowns");
+      .get<DropdownButton[]>("dropdowns", []);
 
     dropdowns = [...dropdowns, ...userDropdowns];
 

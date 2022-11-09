@@ -1,0 +1,43 @@
+{
+  // You may need to set the following line in your settings.json
+  "betterStatusBar.configurationFile": "/config/workspace/.vscode/statusbar.jsonc",
+  // This JSON could also be set directly in the settings.json file.
+  "betterStatusBar.defaultColor": "statusBar.foreground",
+  // "betterStatusBar.loadNpmCommands": false,
+  // Set this to null to reload on configuration change in settings or this file.
+  "betterStatusBar.reloadButton": null,
+  "betterStatusBar.commands": [
+    {
+      // The label makes adding the command to the dropdown easier.
+      "id": "10",
+      "label": "▶️ Hello",
+      "command": "echo 'Hello'",
+      "color": "white",
+      // 1 = left side | 2 = right side
+      "alignment": 1,
+      // Determines the location of the button. Higher priority is farther to the left.
+      "priority": -100,
+      // Setting this to null defaults to the command value (which you could then use to add a keyboard shortcut to) as the tooltip text.
+      "tooltip": "echo 'Hello'",
+      // Change this to false if you only want the button to show in the dropdown.
+      "showButton": true,
+      "terminal": {
+        "cwd": "/config/workspace/transform",
+        "singleInstance": true,
+        "clear": true,
+        "focus": false,
+        // Setting a name allows the terminal to be re-used by other commands with the same name.
+        "name": "dbt"
+      }
+    }
+  ],
+  "betterStatusBar.dropdowns": [
+    {
+      "id": "Dropdown",
+      "label": "Dropdown",
+      // The id or the label can be used to show the commands.
+      "commands": ["5", "🗳️ Prod metadata"],
+      "tooltip": "tooltip"
+    }
+  ]
+}

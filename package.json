@@ -2,7 +2,7 @@
   "name": "better-status-bar",
   "displayName": "Better Status Bar",
   "description": "Add customizable buttons to the status bar to execute actions or tasks",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "publisher": "RobertOstermann",
   "repository": {
     "type": "git",
@@ -187,6 +187,7 @@
         },
         "betterStatusBar.dropdowns": {
           "type": "array",
+          "default": [],
           "markdownDescription": "A status bar button that opens a quick-select of specified commands.",
           "items": {
             "type": "object",
