@@ -9,7 +9,7 @@ import DropdownButton from "../types/dropdown";
 import Variables from "../types/variables";
 
 export default class Configuration {
-  static extensionName = "betterStatusBar";
+  static extensionName = "customCommands";
 
   /**
    * Initialize the configuration options that require a reload upon change.
@@ -26,7 +26,8 @@ export default class Configuration {
 
     if (Configuration.configurationFilePath() !== null) {
       const configurationFileChange = vscode.workspace.onDidSaveTextDocument((event) => {
-        if (event.uri.fsPath.replace(/\\/g, "/").toLowerCase() === Configuration.configurationFilePath().toLowerCase()) {
+        const path = event.uri.fsPath.replace(/\\/g, "/").toLowerCase();
+        if (path === Configuration.configurationFilePath()?.toLowerCase()) {
           vscode.commands.executeCommand(`${Configuration.extensionName}.refreshButtons`);
         }
       });
@@ -62,7 +63,7 @@ export default class Configuration {
   /**
    * @returns Determines whether or not to use the configuration file.
    */
-  static configurationFile(): string {
+  static configurationFile(): string | undefined {
     return vscode.workspace
       .getConfiguration(Configuration.extensionName)
       .get("configurationFile");
@@ -72,22 +73,22 @@ export default class Configuration {
   /**
    * @returns The path to the configuration file.
    */
-  static configurationFilePath(): string {
+  static configurationFilePath(): string | undefined {
     const configurationFile = Configuration.configurationFile() || "";
     // TODO: Add more options
     const pattern = "{**/{s,S}tatus{b,B}ar.{json,jsonc},**/{b,B}etter{s,S}tatus{b,B}ar.{json,jsonc},.vscode/{s,S}tatus{b,B}ar.{json,jsonc}},.vscode/{b,B}etter{s,S}tatus{b,B}ar.{json,jsonc}}";
 
     if (configurationFile.toLowerCase() === "find") {
       let folder = "";
-      let files = [];
-      vscode.workspace.workspaceFolders.forEach(workspaceFolder => {
+      let files: string[] = [];
+      vscode.workspace.workspaceFolders?.forEach(workspaceFolder => {
         if (files[0] !== undefined) return;
 
         folder = workspaceFolder.uri.fsPath.replace(/\\/g, "/");
         files = glob.sync(pattern, { cwd: folder });
       });
 
-      if (files[0] === undefined) return null;
+      if (files[0] === undefined) return undefined;
       return folder + "/" + files[0];
     } else {
       return configurationFile;
@@ -100,18 +101,18 @@ export default class Configuration {
    */
   static configurationFileJSON(): any {
     const path = Configuration.configurationFilePath();
-    if (!Configuration.useConfigurationFile() || path === null) return null;
+    if (!Configuration.useConfigurationFile() || !path) return null;
     if (!fs.existsSync(path)) return null;
 
     let fileData = fs.readFileSync(path).toString();
     // Strip the comments.
     fileData = fileData.replace(/\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g, (m, g) => g ? "" : m);
-    // Remove the default name of betterStatusBar.
-    fileData = fileData.replace(/betterStatusBar\./g, "");
+    // Remove the default name of customCommands.
+    fileData = fileData.replace(/customCommands\./g, "");
     try {
       return JSON.parse(fileData);
     } catch (error) {
-      console.log("Error parsing configuration file.")
+      console.log("Error parsing configuration file.");
       return null;
     }
   }
@@ -128,7 +129,7 @@ export default class Configuration {
 
     return vscode.workspace
       .getConfiguration(Configuration.extensionName)
-      .get<string>("defaultColor", "statusBar.foreground");
+      .get<string>("defaultColor", `${Configuration.extensionName}.foreground`);
   }
 
   /**
@@ -253,44 +254,45 @@ export default class Configuration {
    * @returns The variables for a terminal
    */
   static variables(command: CommandButton): Variables {
-    const rootPath = vscode.workspace.workspaceFolders[0].uri.fsPath;
+    const workspaceFolders = vscode.workspace.workspaceFolders;
+    const rootPath = workspaceFolders ? workspaceFolders[0]?.uri?.fsPath : "";
 
     const vars: Variables = {
       // - the path of the folder opened in VS Code
       workspaceFolder: rootPath,
 
       // - the name of the folder opened in VS Code without any slashes (/)
-      workspaceFolderBasename: (rootPath) ? path.basename(rootPath) : null,
+      workspaceFolderBasename: rootPath ? path.basename(rootPath) : undefined,
 
       // - the current opened file
-      file: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.fileName : null,
+      file: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.fileName : undefined,
 
       // - the current opened file relative to workspaceFolder
       relativeFile: (vscode.window.activeTextEditor && rootPath) ? path.relative(
         rootPath,
         vscode.window.activeTextEditor.document.fileName
-      ) : null,
+      ) : undefined,
 
       // - the current opened file's basename
-      fileBasename: (vscode.window.activeTextEditor) ? path.basename(vscode.window.activeTextEditor.document.fileName) : null,
+      fileBasename: (vscode.window.activeTextEditor) ? path.basename(vscode.window.activeTextEditor.document.fileName) : undefined,
 
       // - the current opened file's basename with no file extension
-      fileBasenameNoExtension: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).name : null,
+      fileBasenameNoExtension: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).name : undefined,
 
       // - the current opened file's dirname
-      fileDirname: (vscode.window.activeTextEditor) ? path.dirname(vscode.window.activeTextEditor.document.fileName) : null,
+      fileDirname: (vscode.window.activeTextEditor) ? path.dirname(vscode.window.activeTextEditor.document.fileName) : undefined,
 
       // - the current opened file's extension
-      fileExtname: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).ext : null,
+      fileExtname: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).ext : undefined,
 
       // - the task runner's current working directory on startup
-      cwd: command.terminal.cwd || rootPath || homedir(),
+      cwd: command.terminal?.cwd || rootPath || homedir(),
 
       // - the current selected line number in the active file
-      lineNumber: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.selection.active.line + 1 : null,
+      lineNumber: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.selection.active.line + 1 : undefined,
 
       // - the current selected text in the active file
-      selectedText: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.getText(vscode.window.activeTextEditor.selection) : null,
+      selectedText: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.getText(vscode.window.activeTextEditor.selection) : undefined,
 
       // - the path to the running VS Code executable
       execPath: process.execPath

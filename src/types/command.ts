@@ -9,18 +9,18 @@ export type TerminalOptions = {
 };
 
 type CommandButton = {
-  id?: string;
-  label?: string;
-  command?: string;
-  alignment?: StatusBarAlignment;
-  color?: string;
-  priority?: number;
-  saveAll?: boolean;
-  showButton?: boolean;
+  id: string;
+  label: string;
+  command: string;
+  alignment: StatusBarAlignment;
+  color: string;
+  priority: number;
+  saveAll: boolean;
+  showButton: boolean;
   tooltip?: string;
-  terminal?: TerminalOptions;
-  useVsCodeApi?: boolean;
-  args?: string[];
+  terminal: TerminalOptions;
+  useVsCodeApi: boolean;
+  args: string[];
 };
 
 export default CommandButton;

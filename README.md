@@ -1,4 +1,4 @@
-# Better Status Bar
+# Custom Commands
 
 Add customizable buttons to the status bar to execute actions or tasks in VS Code.
 
@@ -17,19 +17,19 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 
 ## Installation and setup
 
-- [x] Install the `Better Status Bar` extension in your VS Code instance.
+- [x] Install the `Custom Commands` extension in your VS Code instance.
 - [x] After installing, open your VS Code settings.json file.
 - [x] Define the status bar buttons you want. Below is a sample configuration for reference.
 - [x] Reload the VS Code window to see the new buttons. Alternatively, you can run the `Refresh Status Bar Buttons` command to refresh without reloading the window.
 
 ```json
 {
-  // Better Status Bar
-  "betterStatusBar.defaultColor": "statusBar.foreground",
-  "betterStatusBar.configurationFile": true,
-  "betterStatusBar.loadNpmCommands": false,
-  "betterStatusBar.reloadButton": "Refresh Status Bar",
-  "betterStatusBar.commands": [
+  // Custom Commands
+  "customCommands.defaultColor": "customCommands.foreground",
+  "customCommands.configurationFile": true,
+  "customCommands.loadNpmCommands": false,
+  "customCommands.reloadButton": "Refresh Status Bar",
+  "customCommands.commands": [
     {
       "id": "3",
       "label": "Git Status",
@@ -64,7 +64,7 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
       "useVsCodeApi": true
     }
   ],
-  "betterStatusBar.dropdowns": [
+  "customCommands.dropdowns": [
     {
       "id": "5",
       "label": "Dropdown",
@@ -81,16 +81,16 @@ Add customizable buttons to the status bar to execute actions or tasks in VS Cod
 
 ## Configuration File
 
-You can create a `statusBar.json` file to add the settings to a different place than the settings.json file.
-The settings in `statusBar.json` overrides the `settings.json` properties.
-The commands and dropdowns from `statusBar.json` and `settings.json` are combined.
+You can create a `customCommands.json` file to add the settings to a different place than the settings.json file.
+The settings in `customCommands.json` overrides the `settings.json` properties.
+The commands and dropdowns from `customCommands.json` and `settings.json` are combined.
 
 ## Keyboard Shortcuts
 
 Keyboard Shortcuts can be set up for each of the commands/dropdowns that have been created.
 
 - Go to File -> Preferences -> Keyboard Shortcuts to manually set keyboard shortcuts.
-- Search for **betterStatusBar**.
+- Search for **customCommands**.
   - If the commands are not available/correct, try refreshing the status bar buttons buttons or reloading the window.
 - There should now be a list of commands with the specified ids (from settings.json).
 - Set the desired keyboard shortcut.

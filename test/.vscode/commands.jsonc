@@ -1,12 +1,12 @@
 {
   // You may need to set the following line in your settings.json
-  "betterStatusBar.configurationFile": "/config/workspace/.vscode/statusbar.jsonc",
+  "customCommands.configurationFile": "/config/workspace/.vscode/customCommands.jsonc",
   // This JSON could also be set directly in the settings.json file.
-  "betterStatusBar.defaultColor": "statusBar.foreground",
-  // "betterStatusBar.loadNpmCommands": false,
+  "customCommands.defaultColor": "customCommands.foreground",
+  // "customCommands.loadNpmcustomCommands": false,
   // Set this to null to reload on configuration change in settings or this file.
-  "betterStatusBar.reloadButton": null,
-  "betterStatusBar.commands": [
+  "customCommands.reloadButton": null,
+  "customCommands.commands": [
     {
       // The label makes adding the command to the dropdown easier.
       "id": "10",
@@ -26,16 +26,16 @@
         "singleInstance": true,
         "clear": true,
         "focus": false,
-        // Setting a name allows the terminal to be re-used by other commands with the same name.
+        // Setting a name allows the terminal to be re-used by other customCommands with the same name.
         "name": "dbt"
       }
     }
   ],
-  "betterStatusBar.dropdowns": [
+  "customCommands.dropdowns": [
     {
       "id": "Dropdown",
       "label": "Dropdown",
-      // The id or the label can be used to show the commands.
+      // The id or the label can be used to show the customCommands.
       "commands": ["5", "🗳️ Prod metadata"],
       "tooltip": "tooltip"
     }

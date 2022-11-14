@@ -3,6 +3,7 @@ import * as vscode from "vscode";
 import Configuration from "../helpers/configuration";
 import CommandButton from "../types/command";
 import StatusBarButton from "../types/statusBar";
+import Variables from "../types/variables";
 import Button from "./button";
 
 export default class Command {
@@ -18,7 +19,7 @@ export default class Command {
 
     commands.forEach(
       (command: CommandButton) => {
-        const vsCommand = Configuration.extensionName + "." + command.id.replace(" ", "");
+        const vsCommand = Configuration.extensionName + "." + command.id?.replace(" ", "");
 
         if (commandIds.has(vsCommand)) {
           vscode.window.showErrorMessage(`The id '${command.id}' is used for multiple commands or dropdowns. Please remove duplicate id's.`);
@@ -76,16 +77,19 @@ export default class Command {
     );
   }
 
-  static interpolateString(command: string, variables: object): string {
+  static interpolateString(command: string, variables: Variables): string {
     const regex = /\$\{([^\}]+)\}/g; // eslint-disable-line no-useless-escape
 
     const match = command.match(regex);
     while (match?.length) {
       const placeholder = match.pop();
-      const argument = placeholder.replace("${", "").replace("}", "");
-      const path = argument;
-      const variable = variables[path];
-      command = command.replace(placeholder, variable);
+      const path = placeholder?.replace("${", "").replace("}", "");
+      if (path && placeholder) {
+        const variable: any = variables[path as keyof Variables];
+        if (variable) {
+          command = command.replace(placeholder, variable);
+        }
+      }
     }
 
     return command;

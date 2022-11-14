@@ -13,7 +13,7 @@ export default class Dropdown {
     if (!commands.length || !dropdowns.length) return;
 
     dropdowns.forEach((dropdown: DropdownButton) => {
-      const vsCommand = Configuration.extensionName + "." + dropdown.id.replace(" ", "");
+      const vsCommand = Configuration.extensionName + "." + dropdown.id?.replace(" ", "");
 
       if (commandIds.has(vsCommand)) {
         vscode.window.showErrorMessage(
@@ -47,7 +47,9 @@ export default class Dropdown {
           if (selection[0]) {
             quickPick.hide();
             const quickPickCommand = selection[0].description;
-            vscode.commands.executeCommand(quickPickCommand);
+            if (quickPickCommand) {
+              vscode.commands.executeCommand(quickPickCommand);
+            }
           }
         });
         quickPick.onDidHide(() => quickPick.dispose());

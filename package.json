@@ -1,15 +1,15 @@
 {
-  "name": "better-status-bar",
-  "displayName": "Better Status Bar",
-  "description": "Add customizable buttons to the status bar to execute actions or tasks",
-  "version": "1.0.9",
+  "name": "custom-commands",
+  "displayName": "Custom Commands",
+  "description": "Add customizable commands within VSCode.",
+  "version": "1.0.0",
   "publisher": "RobertOstermann",
   "repository": {
     "type": "git",
     "url": "https://github.com/RobertOstermann/vscode-action-buttons"
   },
   "engines": {
-    "vscode": "^1.27.2"
+    "vscode": "^1.73.0"
   },
   "categories": [
     "Other"
@@ -28,32 +28,32 @@
   "contributes": {
     "commands": [
       {
-        "command": "betterStatusBar.refreshButtons",
+        "command": "customCommands.refreshButtons",
         "title": "Refresh Status Bar Buttons"
       }
     ],
     "configuration": {
-      "title": "Better Status Bar",
+      "title": "Custom Commands",
       "properties": {
-        "betterStatusBar.defaultColor": {
+        "customCommands.defaultColor": {
           "type": "string",
           "required": false,
-          "default": "statusBar.foreground",
+          "default": "customCommands.foreground",
           "markdownDescription": "The color to use for status bar button text. The default is the theme color."
         },
-        "betterStatusBar.configurationFile": {
+        "customCommands.configurationFile": {
           "type": "string",
           "required": false,
           "default": "",
-          "markdownDescription": "Use a configuration file named `statusBar.json` located in the workspace. Set this to `Find` to search for the configuration file in the workspace."
+          "markdownDescription": "Use a configuration file named `customCommands.json` located in the workspace. Set this to `Find` to search for the configuration file in the workspace."
         },
-        "betterStatusBar.loadNpmCommands": {
+        "customCommands.loadNpmCommands": {
           "type": "boolean",
           "required": false,
           "default": false,
           "markdownDescription": "Automatically generate buttons from npm commands listed in `package.json`."
         },
-        "betterStatusBar.reloadButton": {
+        "customCommands.reloadButton": {
           "type": [
             "string",
             "null"
@@ -62,7 +62,7 @@
           "default": null,
           "markdownDescription": "The text for the reload button. The default is to reload on configuration change and not show a reload button."
         },
-        "betterStatusBar.commands": {
+        "customCommands.commands": {
           "type": "array",
           "default": [],
           "markdownDescription": "A list of status bar buttons for specified commands.",
@@ -83,7 +83,7 @@
             "properties": {
               "id": {
                 "type": "string",
-                "markdownDescription": "The unique ID of the status bar button. The ID is prepended with the extension name (betterStatusBar) and can be used to create keyboard shortcuts."
+                "markdownDescription": "The unique ID of the status bar button. The ID is prepended with the extension name (customCommands) and can be used to create keyboard shortcuts."
               },
               "label": {
                 "type": "string",
@@ -108,7 +108,7 @@
               },
               "color": {
                 "type": "string",
-                "default": "statusBar.foreground",
+                "default": "customCommands.foreground",
                 "markdownDescription": "Specifies the status bar button text color."
               },
               "priority": {
@@ -185,7 +185,7 @@
             }
           }
         },
-        "betterStatusBar.dropdowns": {
+        "customCommands.dropdowns": {
           "type": "array",
           "default": [],
           "markdownDescription": "A status bar button that opens a quick-select of specified commands.",
@@ -205,7 +205,7 @@
             "properties": {
               "id": {
                 "type": "string",
-                "markdownDescription": "The unique ID of the quick-select button\n\nThe ID is prepended with the extension name (betterStatusBar) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters."
+                "markdownDescription": "The unique ID of the quick-select button\n\nThe ID is prepended with the extension name (customCommands) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters."
               },
               "label": {
                 "type": "string",
@@ -234,7 +234,7 @@
               },
               "color": {
                 "type": "string",
-                "default": "statusBar.foreground",
+                "default": "customCommands.foreground",
                 "markdownDescription": "Specifies the quick-select button text color."
               },
               "priority": {
@@ -291,26 +291,26 @@
     "jsonValidation": [
       {
         "fileMatch": [
-          "statusbar.json",
-          "statusbar.jsonc",
-          "statusBar.json",
-          "statusBar.jsonc",
-          "Statusbar.json",
-          "Statusbar.jsonc",
-          "StatusBar.json",
-          "StatusBar.jsonc",
-          "betterstatusbar.json",
-          "betterstatusbar.jsonc",
-          "betterStatusbar.json",
-          "betterStatusbar.jsonc",
-          "betterStatusBar.json",
-          "betterStatusBar.jsonc",
-          "BetterstatusBar.json",
-          "BetterstatusBar.jsonc",
-          "BetterStatusBar.json",
-          "BetterStatusBar.jsonc"
+          "commands.json",
+          "commands.jsonc",
+          "commands.json",
+          "commands.jsonc",
+          "commands.json",
+          "commands.jsonc",
+          "commands.json",
+          "commands.jsonc",
+          "customCommands.json",
+          "customCommands.jsonc",
+          "customCommands.json",
+          "customCommands.jsonc",
+          "customCommands.json",
+          "customCommands.jsonc",
+          "customCommands.json",
+          "customCommands.jsonc",
+          "customCommands.json",
+          "customCommands.jsonc"
         ],
-        "url": "./out/src/schema/statusBar.schema.json"
+        "url": "./out/src/schema/commands.schema.json"
       }
     ]
   },

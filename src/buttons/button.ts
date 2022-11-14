@@ -7,7 +7,7 @@ export default class Button {
     const statusBarButton = vscode.window.createStatusBarItem(options.alignment, options.priority);
     statusBarButton.color = options.color;
     statusBarButton.command = options.command;
-    statusBarButton.text = options.label;
+    statusBarButton.text = options.label ?? "undefined";
     statusBarButton.tooltip = options.tooltip;
 
     statusBarButton.show();
