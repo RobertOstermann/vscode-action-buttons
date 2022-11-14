@@ -1,0 +1,221 @@
+{
+  "$id": "https://example.com/person.schema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Status Bar",
+  "type": "object",
+  "properties": {
+    "betterStatusBar.defaultColor": {
+      "type": "string",
+      "required": false,
+      "default": "statusBar.foreground",
+      "markdownDescription": "The color to use for status bar button text. The default is the theme color."
+    },
+    "betterStatusBar.loadNpmCommands": {
+      "type": "boolean",
+      "required": false,
+      "default": false,
+      "markdownDescription": "Automatically generate buttons from npm commands listed in `package.json`."
+    },
+    "betterStatusBar.reloadButton": {
+      "type": ["string", "null"],
+      "required": false,
+      "default": null,
+      "markdownDescription": "The text for the reload button. The default is to reload on configuration change and not show a reload button."
+    },
+    "betterStatusBar.commands": {
+      "type": "array",
+      "default": [],
+      "markdownDescription": "A list of status bar buttons for specified commands.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "uniqueItems": true,
+        "default": {
+          "id": "",
+          "label": "",
+          "command": ""
+        },
+        "required": ["id", "label", "command"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "markdownDescription": "The unique ID of the status bar button. The ID is prepended with the extension name (betterStatusBar) and can be used to create keyboard shortcuts."
+          },
+          "label": {
+            "type": "string",
+            "markdownDescription": "The label for the status bar button."
+          },
+          "command": {
+            "type": "string",
+            "markdownDescription": "Command to execute when the status bar button is selected.\n\nThis specifies the command to execute in the terminal.\nIf `useVsCodeApi` is `true`, this is the VS Code command to execute."
+          },
+          "alignment": {
+            "type": "number",
+            "enum": [1, 2],
+            "default": 1,
+            "markdownEnumDescriptions": [
+              "Aligned to the left side.",
+              "Aligned to the right side."
+            ],
+            "markdownDescription": "The alignment of the status bar button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
+          },
+          "color": {
+            "type": "string",
+            "default": "statusBar.foreground",
+            "markdownDescription": "Specifies the status bar button text color."
+          },
+          "priority": {
+            "type": "number",
+            "default": 0,
+            "markdownDescription": "The priority of this item. A higher value means the item should be shown more to the left."
+          },
+          "saveAll": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Save all open files before execute command."
+          },
+          "showButton": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Determines if the status bar button is shown on the status bar."
+          },
+          "terminal": {
+            "type": "object",
+            "additionalProperties": false,
+            "markdownDescription": "The terminal settings for this command. Only valid when `useVsCodeApi = false`.",
+            "properties": {
+              "name": {
+                "type": ["string", "null"],
+                "default": null,
+                "markdownDescription": "The name of the terminal for this command. If a terminal with this name is already open then the terminal will be re-used."
+              },
+              "clear": {
+                "type": "boolean",
+                "default": true,
+                "markdownDescription": "Determines if the terminal is cleared before the specified command is run."
+              },
+              "cwd": {
+                "type": ["string", "null"],
+                "default": null,
+                "markdownDescription": "The start directory when executing terminal command."
+              },
+              "focus": {
+                "type": "boolean",
+                "default": false,
+                "markdownDescription": "Focus the terminal after executing the command."
+              },
+              "singleInstance": {
+                "type": "boolean",
+                "default": true,
+                "markdownDescription": "Re-open the associated terminal each time this action is activated."
+              }
+            }
+          },
+          "tooltip": {
+            "type": ["string", "null"],
+            "default": null,
+            "markdownDescription": "Tooltip text to display when hovering over the button."
+          },
+          "useVsCodeApi": {
+            "type": "boolean",
+            "default": false,
+            "markdownDescription": "Specifies whether to execute a VS Code command or terminal command."
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "markdownDescription": "A list of arguments passed to VS Code command\n\nOnly valid when `useVsCodeApi` is `true`."
+          }
+        }
+      }
+    },
+    "betterStatusBar.dropdowns": {
+      "type": "array",
+      "markdownDescription": "A status bar button that opens a quick-select of specified commands.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "uniqueItems": true,
+        "default": {
+          "id": "",
+          "label": "",
+          "commands": []
+        },
+        "required": ["id", "label"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "markdownDescription": "The unique ID of the quick-select button\n\nThe ID is prepended with the extension name (betterStatusBar) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters."
+          },
+          "label": {
+            "type": "string",
+            "markdownDescription": "The label of the quick-select button."
+          },
+          "commands": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "default": [],
+            "markdownDescription": "A list with the id or label for the commands to display in the dropdown."
+          },
+          "alignment": {
+            "type": "number",
+            "enum": [1, 2],
+            "default": 1,
+            "markdownEnumDescriptions": [
+              "Aligned to the left side.",
+              "Aligned to the right side."
+            ],
+            "markdownDescription": "The alignment of the status bar button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
+          },
+          "color": {
+            "type": "string",
+            "default": "statusBar.foreground",
+            "markdownDescription": "Specifies the quick-select button text color."
+          },
+          "priority": {
+            "type": "number",
+            "default": 0,
+            "markdownDescription": "The priority of this item. A higher value means the item should be shown more to the left."
+          },
+          "showButton": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "Determines if the status bar button is shown on the status bar."
+          },
+          "tooltip": {
+            "type": ["string", "null"],
+            "default": null,
+            "markdownDescription": "Tooltip text to display when hovering over the button."
+          },
+          "options": {
+            "type": "object",
+            "additionalProperties": false,
+            "markdownDescription": "The quick-select options.",
+            "properties": {
+              "ignoreFocusOut": {
+                "type": "boolean",
+                "default": false,
+                "markdownDescription": "Determines if the dropdown should stay open even when loosing dropdown focus."
+              },
+              "placeholder": {
+                "type": ["string", "null"],
+                "default": null,
+                "markdownDescription": "Optional placeholder in the filter text."
+              },
+              "title": {
+                "type": ["string", "null"],
+                "default": null,
+                "markdownDescription": "An optional title."
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
