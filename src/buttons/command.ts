@@ -76,22 +76,4 @@ export default class Command {
       }
     );
   }
-
-  static interpolateString(command: string, variables: Variables): string {
-    const regex = /\$\{([^\}]+)\}/g; // eslint-disable-line no-useless-escape
-
-    const match = command.match(regex);
-    while (match?.length) {
-      const placeholder = match.pop();
-      const path = placeholder?.replace("${", "").replace("}", "");
-      if (path && placeholder) {
-        const variable: any = variables[path as keyof Variables];
-        if (variable) {
-          command = command.replace(placeholder, variable);
-        }
-      }
-    }
-
-    return command;
-  }
 }

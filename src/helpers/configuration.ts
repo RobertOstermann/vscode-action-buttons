@@ -7,6 +7,7 @@ import * as vscode from "vscode";
 import CommandButton from "../types/command";
 import DropdownButton from "../types/dropdown";
 import Variables from "../types/variables";
+import Utilities from "./utilities";
 
 export default class Configuration {
   static extensionName = "customCommands";
@@ -254,45 +255,48 @@ export default class Configuration {
    * @returns The variables for a terminal
    */
   static variables(command: CommandButton): Variables {
-    const workspaceFolders = vscode.workspace.workspaceFolders;
-    const rootPath = workspaceFolders ? workspaceFolders[0]?.uri?.fsPath : "";
+    const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
+    const rootPath = workspaceFolder ? Utilities.normalizePath(workspaceFolder) : undefined;
+
+    const editor = vscode.window.activeTextEditor;
+    const fileName = editor ? Utilities.normalizePath(editor.document.fileName) : undefined;
 
     const vars: Variables = {
       // - the path of the folder opened in VS Code
       workspaceFolder: rootPath,
 
-      // - the name of the folder opened in VS Code without any slashes (/)
+      // - the last portion of the path of the folder opened in VS Code
       workspaceFolderBasename: rootPath ? path.basename(rootPath) : undefined,
 
       // - the current opened file
-      file: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.fileName : undefined,
+      file: fileName,
 
       // - the current opened file relative to workspaceFolder
-      relativeFile: (vscode.window.activeTextEditor && rootPath) ? path.relative(
+      relativeFile: (vscode.window.activeTextEditor && rootPath && fileName) ? Utilities.normalizePath(path.relative(
         rootPath,
-        vscode.window.activeTextEditor.document.fileName
-      ) : undefined,
+        fileName
+      )) : undefined,
 
-      // - the current opened file's basename
-      fileBasename: (vscode.window.activeTextEditor) ? path.basename(vscode.window.activeTextEditor.document.fileName) : undefined,
+      // - the last portion of the path to the file
+      fileBasename: fileName ? path.basename(fileName) : undefined,
 
-      // - the current opened file's basename with no file extension
-      fileBasenameNoExtension: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).name : undefined,
+      // - the last portion of the path to the file with no file extension
+      fileBasenameNoExtension: fileName ? path.parse(path.basename(fileName)).name : undefined,
 
       // - the current opened file's dirname
-      fileDirname: (vscode.window.activeTextEditor) ? path.dirname(vscode.window.activeTextEditor.document.fileName) : undefined,
+      fileDirname: fileName ? path.dirname(fileName) : undefined,
 
       // - the current opened file's extension
-      fileExtname: (vscode.window.activeTextEditor) ? path.parse(path.basename(vscode.window.activeTextEditor.document.fileName)).ext : undefined,
+      fileExtname: fileName ? path.parse(path.basename(fileName)).ext : undefined,
 
       // - the task runner's current working directory on startup
       cwd: command.terminal?.cwd || rootPath || homedir(),
 
       // - the current selected line number in the active file
-      lineNumber: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.selection.active.line + 1 : undefined,
+      lineNumber: editor ? (editor.selection.active.line + 1) : undefined,
 
       // - the current selected text in the active file
-      selectedText: (vscode.window.activeTextEditor) ? vscode.window.activeTextEditor.document.getText(vscode.window.activeTextEditor.selection) : undefined,
+      selectedText: editor ? editor.document.getText(editor.selection) : undefined,
 
       // - the path to the running VS Code executable
       execPath: process.execPath
