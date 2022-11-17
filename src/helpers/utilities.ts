@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-import Variables from "../types/variables";
+import Variables from "../commands/types/variables";
 
 export default class Utilities {
   static outputChannel = vscode.window.createOutputChannel("SQLFluff");

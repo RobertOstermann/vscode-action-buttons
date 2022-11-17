@@ -9,12 +9,6 @@
       "default": "customCommands.foreground",
       "markdownDescription": "The color to use for status bar button text. The default is the theme color."
     },
-    "customCommands.loadNpmCommands": {
-      "type": "boolean",
-      "required": [],
-      "default": false,
-      "markdownDescription": "Automatically generate buttons from npm commands listed in `package.json`."
-    },
     "customCommands.reloadButton": {
       "type": ["string", "null"],
       "required": [],

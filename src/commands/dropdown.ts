@@ -1,10 +1,10 @@
 import * as vscode from "vscode";
 
 import Configuration from "../helpers/configuration";
-import CommandButton from "../types/command";
-import DropdownButton from "../types/dropdown";
-import StatusBarButton from "../types/statusBar";
-import Button from "./button";
+import StatusBarItem from "./statusBar/statusBarItem";
+import StatusBarButton from "./statusBar/types/statusBarButton";
+import CommandButton from "./types/command";
+import DropdownButton from "./types/dropdown";
 
 export default class Dropdown {
   static createDropdowns(context: vscode.ExtensionContext, commands: CommandButton[], commandIds: Set<string>, disposables: vscode.Disposable[]): void {
@@ -13,15 +13,15 @@ export default class Dropdown {
     if (!commands.length || !dropdowns.length) return;
 
     dropdowns.forEach((dropdown: DropdownButton) => {
-      const vsCommand = Configuration.extensionName + "." + dropdown.id?.replace(" ", "");
+      const commandId = Configuration.extensionName + "." + dropdown.id?.replace(" ", "");
 
-      if (commandIds.has(vsCommand)) {
-        vscode.window.showErrorMessage(
-          `The id '${dropdown.id}' is used for multiple commands or dropdowns. Please remove duplicate id's.`
-        );
+      if (commandIds.has(commandId)) {
+        const errorMessage = `The id '${dropdown.id}' is used for multiple commands or dropdowns. Please remove duplicate id's.`;
+        vscode.window.showErrorMessage(errorMessage);
         return;
       }
-      commandIds.add(vsCommand);
+
+      commandIds.add(commandId);
 
       const dropdownCommands = commands.filter(
         (command: CommandButton) =>
@@ -37,7 +37,7 @@ export default class Dropdown {
         quickPickItems.push(quickPickItem);
       });
 
-      const disposable = vscode.commands.registerCommand(vsCommand, async () => {
+      const disposable = vscode.commands.registerCommand(commandId, async () => {
         const quickPick = vscode.window.createQuickPick();
         quickPick.title = dropdown.options?.title;
         quickPick.items = quickPickItems;
@@ -63,13 +63,13 @@ export default class Dropdown {
         const statusBarOptions: StatusBarButton = {
           alignment: dropdown.alignment,
           color: dropdown.color,
-          command: vsCommand,
+          command: commandId,
           label: dropdown.label,
           tooltip: dropdown.tooltip,
           priority: dropdown.priority
         };
 
-        Button.createStatusBarButton(statusBarOptions, disposables);
+        StatusBarItem.createStatusBarButton(statusBarOptions, disposables);
       }
     });
   }

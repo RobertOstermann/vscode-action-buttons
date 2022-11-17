@@ -1,8 +1,8 @@
 import * as vscode from "vscode";
 
-import StatusBarButton from "../types/statusBar";
+import StatusBarButton from "./types/statusBarButton";
 
-export default class Button {
+export default class StatusBarItem {
   static createStatusBarButton(options: StatusBarButton, disposables: vscode.Disposable[]): void {
     const statusBarButton = vscode.window.createStatusBarItem(options.alignment, options.priority);
     statusBarButton.color = options.color;

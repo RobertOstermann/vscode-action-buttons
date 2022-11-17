@@ -28,8 +28,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "customCommands.refreshButtons",
-        "title": "Refresh Status Bar Buttons"
+        "command": "customCommands.refreshExtension",
+        "title": "Custom Commands: Refresh Extension"
       }
     ],
     "configuration": {
@@ -45,13 +45,7 @@
           "type": "string",
           "required": false,
           "default": "",
-          "markdownDescription": "Use a configuration file named `customCommands.json` located in the workspace. Set this to `Find` to search for the configuration file in the workspace."
-        },
-        "customCommands.loadNpmCommands": {
-          "type": "boolean",
-          "required": false,
-          "default": false,
-          "markdownDescription": "Automatically generate buttons from npm commands listed in `package.json`."
+          "markdownDescription": "Use a configuration file named `customCommands.json` or `commands.json`. Set this to `Find` to search for the configuration file in the workspace."
         },
         "customCommands.reloadButton": {
           "type": [
@@ -65,7 +59,7 @@
         "customCommands.commands": {
           "type": "array",
           "default": [],
-          "markdownDescription": "A list of status bar buttons for specified commands.",
+          "markdownDescription": "A list of commands.",
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -77,63 +71,41 @@
             },
             "required": [
               "id",
-              "label",
               "command"
             ],
             "properties": {
               "id": {
                 "type": "string",
-                "markdownDescription": "The unique ID of the status bar button. The ID is prepended with the extension name (customCommands) and can be used to create keyboard shortcuts."
+                "markdownDescription": "The unique ID of the command. The ID is prepended with the extension name `customCommands`."
               },
               "label": {
                 "type": "string",
-                "markdownDescription": "The label for the status bar button."
+                "markdownDescription": "The label for the command. This adds the command to the command palette."
               },
               "command": {
                 "type": "string",
-                "markdownDescription": "Command to execute when the status bar button is selected.\n\nThis specifies the command to execute in the terminal.\nIf `useVsCodeApi` is `true`, this is the VS Code command to execute."
+                "markdownDescription": "This specifies the command to execute in the terminal. If `executeCommand` is `true`, this is the [command](https://code.visualstudio.com/api/extension-guides/command#programmatically-executing-a-command) to execute."
               },
-              "alignment": {
-                "type": "number",
-                "enum": [
-                  1,
-                  2
-                ],
-                "default": 1,
-                "markdownEnumDescriptions": [
-                  "Aligned to the left side.",
-                  "Aligned to the right side."
-                ],
-                "markdownDescription": "The alignment of the status bar button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
-              },
-              "color": {
-                "type": "string",
-                "default": "customCommands.foreground",
-                "markdownDescription": "Specifies the status bar button text color."
-              },
-              "priority": {
-                "type": "number",
-                "default": 0,
-                "markdownDescription": "The priority of this item. A higher value means the item should be shown more to the left."
-              },
-              "saveAll": {
+              "executeCommand": {
                 "type": "boolean",
                 "default": false,
-                "markdownDescription": "Save all open files before execute command."
+                "markdownDescription": "Should the command execute a visual studio code provided [command](https://code.visualstudio.com/api/extension-guides/command#programmatically-executing-a-command)."
               },
-              "showButton": {
-                "type": "boolean",
-                "default": true,
-                "markdownDescription": "Determines if the status bar button is shown on the status bar."
+              "executeCommandArguments": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "default": [],
+                "markdownDescription": "A list of arguments passed to the command. Only valid when `executeCommand` is `true`."
               },
               "terminal": {
                 "type": "object",
                 "additionalProperties": false,
-                "markdownDescription": "The terminal settings for this command. Only valid when `useVsCodeApi = false`.",
+                "markdownDescription": "The terminal settings for this command. Only valid when `executeCommand` is `false`.",
                 "properties": {
                   "name": {
                     "type": "string",
-                    "default": null,
                     "markdownDescription": "The name of the terminal for this command. If a terminal with this name is already open then the terminal will be re-used."
                   },
                   "clear": {
@@ -141,13 +113,9 @@
                     "default": true,
                     "markdownDescription": "Determines if the terminal is cleared before the specified command is run."
                   },
-                  "cwd": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "default": null,
-                    "markdownDescription": "The start directory when executing terminal command."
+                  "workingDirectory": {
+                    "type": "string",
+                    "markdownDescription": "Set the working directory for the terminal."
                   },
                   "focus": {
                     "type": "boolean",
@@ -157,30 +125,9 @@
                   "singleInstance": {
                     "type": "boolean",
                     "default": true,
-                    "markdownDescription": "Re-open the associated terminal each time this action is activated."
+                    "markdownDescription": "Re-open the same terminal each time this action is activated."
                   }
                 }
-              },
-              "tooltip": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "default": null,
-                "markdownDescription": "Tooltip text to display when hovering over the button."
-              },
-              "useVsCodeApi": {
-                "type": "boolean",
-                "default": false,
-                "markdownDescription": "Specifies whether to execute a VS Code command or terminal command."
-              },
-              "args": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "default": [],
-                "markdownDescription": "A list of arguments passed to VS Code command\n\nOnly valid when `useVsCodeApi` is `true`."
               }
             }
           }
@@ -188,7 +135,7 @@
         "customCommands.dropdowns": {
           "type": "array",
           "default": [],
-          "markdownDescription": "A status bar button that opens a quick-select of specified commands.",
+          "markdownDescription": "A command that opens a quick-select of specified commands.",
           "items": {
             "type": "object",
             "additionalProperties": false,
@@ -205,11 +152,11 @@
             "properties": {
               "id": {
                 "type": "string",
-                "markdownDescription": "The unique ID of the quick-select button\n\nThe ID is prepended with the extension name (customCommands) to create the vscode command id and can be used to create keyboard shortcuts\n\nThis should not have any spaces or special characters."
+                "markdownDescription": "The unique ID of the command. The ID is prepended with the extension name `customCommands`."
               },
               "label": {
                 "type": "string",
-                "markdownDescription": "The label of the quick-select button."
+                "markdownDescription": "The label for the command. This adds the command to the command palette."
               },
               "commands": {
                 "type": "array",
@@ -218,42 +165,6 @@
                 },
                 "default": [],
                 "markdownDescription": "A list with the id or label for the commands to display in the dropdown."
-              },
-              "alignment": {
-                "type": "number",
-                "enum": [
-                  1,
-                  2
-                ],
-                "default": 1,
-                "markdownEnumDescriptions": [
-                  "Aligned to the left side.",
-                  "Aligned to the right side."
-                ],
-                "markdownDescription": "The alignment of the status bar button on the status bar. The number 1 indicates the left side, while the number 2 indicates the right side."
-              },
-              "color": {
-                "type": "string",
-                "default": "customCommands.foreground",
-                "markdownDescription": "Specifies the quick-select button text color."
-              },
-              "priority": {
-                "type": "number",
-                "default": 0,
-                "markdownDescription": "The priority of this item. A higher value means the item should be shown more to the left."
-              },
-              "showButton": {
-                "type": "boolean",
-                "default": true,
-                "markdownDescription": "Determines if the status bar button is shown on the status bar."
-              },
-              "tooltip": {
-                "type": [
-                  "string",
-                  "null"
-                ],
-                "default": null,
-                "markdownDescription": "Tooltip text to display when hovering over the button."
               },
               "options": {
                 "type": "object",
@@ -266,24 +177,45 @@
                     "markdownDescription": "Determines if the dropdown should stay open even when loosing dropdown focus."
                   },
                   "placeholder": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "default": null,
+                    "type": "string",
                     "markdownDescription": "Optional placeholder in the filter text."
                   },
                   "title": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
-                    "default": null,
+                    "type": "string",
                     "markdownDescription": "An optional title."
                   }
                 }
               }
             }
+          }
+        },
+        "customCommands.statusBar.items": {
+          "alignment": {
+            "type": "number",
+            "enum": [
+              1,
+              2
+            ],
+            "default": 1,
+            "markdownEnumDescriptions": [
+              "Aligned to the left side.",
+              "Aligned to the right side."
+            ],
+            "markdownDescription": "The alignment of the item on the status bar."
+          },
+          "color": {
+            "type": "string",
+            "default": "customCommands.foreground",
+            "markdownDescription": "The color of the item on the status bar."
+          },
+          "priority": {
+            "type": "number",
+            "default": 0,
+            "markdownDescription": "The priority of this item. A higher value means the item should be shown more to the left."
+          },
+          "tooltip": {
+            "type": "string",
+            "markdownDescription": "Tooltip text to display when hovering over the button."
           }
         }
       }

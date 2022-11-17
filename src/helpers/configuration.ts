@@ -4,9 +4,9 @@ import { homedir } from "os";
 import * as path from "path";
 import * as vscode from "vscode";
 
-import CommandButton from "../types/command";
-import DropdownButton from "../types/dropdown";
-import Variables from "../types/variables";
+import CustomCommand from "../commands/types/command";
+import DropdownButton from "../commands/types/dropdown";
+import Variables from "../commands/types/variables";
 import Utilities from "./utilities";
 
 export default class Configuration {
@@ -56,18 +56,16 @@ export default class Configuration {
    * @returns Determines whether or not to use the configuration file.
    */
   static useConfigurationFile(): boolean {
-    const configurationFile = Configuration.configurationFile() || "";
-
-    return configurationFile === "" ? false : true;
+    return Configuration.configurationFile() ? false : true;
   }
 
   /**
    * @returns Determines whether or not to use the configuration file.
    */
-  static configurationFile(): string | undefined {
+  static configurationFile(): string {
     return vscode.workspace
       .getConfiguration(Configuration.extensionName)
-      .get("configurationFile");
+      .get("configurationFile", "");
   }
 
 
@@ -75,9 +73,13 @@ export default class Configuration {
    * @returns The path to the configuration file.
    */
   static configurationFilePath(): string | undefined {
-    const configurationFile = Configuration.configurationFile() || "";
+    const configurationFile = Configuration.configurationFile();
     // TODO: Add more options
-    const pattern = "{**/{s,S}tatus{b,B}ar.{json,jsonc},**/{b,B}etter{s,S}tatus{b,B}ar.{json,jsonc},.vscode/{s,S}tatus{b,B}ar.{json,jsonc}},.vscode/{b,B}etter{s,S}tatus{b,B}ar.{json,jsonc}}";
+    const fileTypes = "json, jsonc";
+    let pattern = `{**/{c,C}ommands.{${fileTypes}},`;
+    pattern += `**/{c,C}ustom{c,C}ommands.{${fileTypes}},`;
+    pattern += `.vscode/{c,C}ommands.{${fileTypes}}},`;
+    pattern += `.vscode/{c,C}ustom{c,C}ommands.{${fileTypes}}}`;
 
     if (configurationFile.toLowerCase() === "find") {
       let folder = "";
@@ -134,21 +136,6 @@ export default class Configuration {
   }
 
   /**
-   * @returns Automatically generate buttons from npm commands listed in `package.json`.
-   */
-  static loadNpmCommands(): boolean {
-    if (Configuration.useConfigurationFile()) {
-      const configuration = Configuration.configurationFileJSON();
-      const loadNpmCommands = configuration?.loadNpmCommands;
-      if (loadNpmCommands !== undefined) return loadNpmCommands;
-    }
-
-    return vscode.workspace
-      .getConfiguration(Configuration.extensionName)
-      .get<boolean>("loadNpmCommands", false);
-  }
-
-  /**
    * @returns The text for the reload button. The default is to reload on configuration change and not show a reload button.
    */
   static reloadButton(): string | null {
@@ -173,7 +160,7 @@ export default class Configuration {
   /**
    * @returns A list of status bar buttons for specified commands.
    */
-  static commands(): Array<CommandButton> {
+  static commands(): CustomCommand[] {
     let commands = [];
 
     if (Configuration.useConfigurationFile()) {
@@ -183,7 +170,7 @@ export default class Configuration {
 
     const userCommands = vscode.workspace
       .getConfiguration(Configuration.extensionName)
-      .get<CommandButton[]>("commands", []);
+      .get<CustomCommand[]>("commands", []);
 
     commands = [...commands, ...userCommands];
 
@@ -217,7 +204,7 @@ export default class Configuration {
   /**
    * @returns A status bar button that opens a quick-select of specified commands.
    */
-  static dropdowns(): Array<DropdownButton> {
+  static dropdowns(): DropdownButton[] {
     let dropdowns = [];
 
     if (Configuration.useConfigurationFile()) {
@@ -254,7 +241,7 @@ export default class Configuration {
   /**
    * @returns The variables for a terminal
    */
-  static variables(command: CommandButton): Variables {
+  static variables(command: CustomCommand): Variables {
     const workspaceFolder = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : undefined;
     const rootPath = workspaceFolder ? Utilities.normalizePath(workspaceFolder) : undefined;
 
@@ -290,7 +277,7 @@ export default class Configuration {
       fileExtname: fileName ? path.parse(path.basename(fileName)).ext : undefined,
 
       // - the task runner's current working directory on startup
-      cwd: command.terminal?.cwd || rootPath || homedir(),
+      cwd: command.terminal?.workingDirectory || rootPath || homedir(),
 
       // - the current selected line number in the active file
       lineNumber: editor ? (editor.selection.active.line + 1) : undefined,
